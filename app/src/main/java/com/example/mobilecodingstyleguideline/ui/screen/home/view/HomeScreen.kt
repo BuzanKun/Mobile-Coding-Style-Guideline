@@ -1,0 +1,118 @@
+package com.example.mobilecodingstyleguideline.ui.screen.home.view
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.mobilecodingstyleguideline.model.home.HomeCallback
+import com.example.mobilecodingstyleguideline.ui.screen.createasset.view.CreateAssetDialog
+import com.example.mobilecodingstyleguideline.ui.screen.home.uistate.HomeUiState
+import com.example.mobilecodingstyleguideline.ui.screen.home.view.listsection.HomeListSection
+import com.example.mobilecodingstyleguideline.ui.screen.home.viewmodel.HomeViewModel
+import com.example.mobilecodingstyleguideline.util.Asset
+import com.tagsamurai.tscomponents.R
+import com.tagsamurai.tscomponents.button.CustomFloatingIconButton
+import com.tagsamurai.tscomponents.handlestate.HandleState
+import com.tagsamurai.tscomponents.pagetitle.PageTitle
+import com.tagsamurai.tscomponents.scaffold.Scaffold
+import com.tagsamurai.tscomponents.snackbar.OnShowSnackBar
+import com.tagsamurai.tscomponents.tab.TabList
+import com.tagsamurai.tscomponents.theme.theme
+
+@Composable
+fun HomeScreen(onNavigateTo: (String) -> Unit, onShowSnackBar: OnShowSnackBar) {
+    val homeViewModel: HomeViewModel = hiltViewModel()
+    val uiState = homeViewModel.uiState.collectAsStateWithLifecycle()
+    val homeCallback = homeViewModel.getCallback()
+
+    LaunchedEffect(Unit) {
+        homeViewModel.init()
+    }
+
+    HomeScreen(
+        uiState = uiState.value,
+        homeCallback = homeCallback,
+        onShowSnackBar = onShowSnackBar,
+        onNavigateTo = onNavigateTo
+    )
+}
+
+@Composable
+fun HomeScreen(
+    uiState: HomeUiState,
+    homeCallback: HomeCallback,
+    onNavigateTo: (String) -> Unit,
+    onShowSnackBar: OnShowSnackBar
+) {
+    var data: Asset? by remember { mutableStateOf(null) }
+    var showCreateDialog by remember { mutableStateOf(false) }
+
+    HandleState(
+        state = uiState.deleteState,
+        onShowSnackBar = onShowSnackBar,
+        successMsg = "Success, asset has been deleted.",
+        errorMsg = "Error, failed to delete asset. Please check your connection and try again",
+        onDispose = homeCallback.onResetMessageState
+    )
+
+    Scaffold(
+        topBar = {
+            HomeTopAppBar(
+                uiState = uiState,
+                homeCallback = homeCallback
+            )
+        },
+        floatingActionButton = {
+            CustomFloatingIconButton(
+                icon = R.drawable.ic_add_fill_24dp,
+                containerColor = theme.warning500,
+                iconColor = theme.warning500
+            ) {
+                showCreateDialog = true
+            }
+        },
+        isShowLoadingOverlay = uiState.isLoadingOverlay
+    ) {
+        Column {
+            PageTitle(
+                title = "Supplier",
+                bottomContent = {
+                    TabList(
+                        onTabChange = {},
+                        tabs = listOf("List", "Supplier Activities"),
+                        selectedTabIndex = 0,
+                        modifier = Modifier.padding(bottom = 14.dp)
+                    )
+                }
+            )
+            HomeListSection(
+                uiState = uiState,
+                homeCallback = homeCallback,
+                onEditAsset = { value ->
+                    data = value
+                    showCreateDialog = true
+                },
+                onNavigateTo = onNavigateTo
+            )
+        }
+
+        CreateAssetDialog(
+            onDismissRequest = { state ->
+                showCreateDialog = state
+                data = null
+            },
+            showDialog = showCreateDialog,
+            data = data,
+            onShowSnackBar = onShowSnackBar,
+            onSubmit = homeCallback.onUpdateAsset
+        )
+    }
+}
