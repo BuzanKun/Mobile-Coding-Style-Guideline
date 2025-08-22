@@ -55,11 +55,30 @@ fun HomeScreen(
     var data: Asset? by remember { mutableStateOf(null) }
     var showCreateDialog by remember { mutableStateOf(false) }
 
+    // Delete State
     HandleState(
         state = uiState.deleteState,
         onShowSnackBar = onShowSnackBar,
-        successMsg = "Success, asset has been deleted.",
-        errorMsg = "Error, failed to delete asset. Please check your connection and try again",
+        successMsg = "Success, supplier has been deleted.",
+        errorMsg = "Error, failed to delete supplier. Please check your connection and try again",
+        onDispose = homeCallback.onResetMessageState
+    )
+
+    // Activate State
+    HandleState(
+        state = uiState.activateState,
+        onShowSnackBar = onShowSnackBar,
+        successMsg = "Success, supplier has been activated.",
+        errorMsg = "Error, failed to activate supplier. Please check your connection and try again.",
+        onDispose = homeCallback.onResetMessageState
+    )
+
+    // Inactivate State
+    HandleState(
+        state = uiState.inactivateState,
+        onShowSnackBar = onShowSnackBar,
+        successMsg = "Successs, supplier has been inactivated.",
+        errorMsg = "Error, failed to inactivate supplier. Please check your connection and try again.",
         onDispose = homeCallback.onResetMessageState
     )
 

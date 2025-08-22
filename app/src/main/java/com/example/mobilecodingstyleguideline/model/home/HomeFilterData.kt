@@ -6,4 +6,5 @@ data class HomeFilterData(
     val citySelected: List<String> = emptyList(),
     val itemSelected: List<String> = emptyList(),
     val picSelected: List<String> = emptyList(),
+    val dateSelected: List<Long> = emptyList()
 )

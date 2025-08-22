@@ -19,7 +19,7 @@ data class Asset(
     val picCountryCode: String = "",
     val picPhoneNumber: String = "",
     val picEmail: String = "",
-    val lastModified: String = ""
+    val lastModified: Long = 0L
 )
 
 data class Sku(
@@ -95,7 +95,7 @@ object DataDummy {
                     )
                 ),
                 picName = "Nakamoto Y",
-                lastModified = "Fri 29 Sept 2023 13:00:01"
+                lastModified = 1724212800L
             ),
             Asset(
                 id = "2",
@@ -124,7 +124,7 @@ object DataDummy {
                     ),
                 ),
                 picName = "Mark L",
-                lastModified = "Fri 29 Sept 2023 13:00:01"
+                lastModified = 1724385600L
             ),
             Asset(
                 id = "3",
@@ -161,7 +161,7 @@ object DataDummy {
                     )
                 ),
                 picName = "Karina Y",
-                lastModified = "Fri 29 Sept 2023 13:00:01"
+                lastModified = 1724558400L
             ),
             Asset(
                 id = "4",
@@ -206,7 +206,7 @@ object DataDummy {
                     )
                 ),
                 picName = "Hong E",
-                lastModified = "Fri 29 Sept 2023 13:00:01"
+                lastModified = 1724731200L
             ),
         )
     }

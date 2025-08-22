@@ -143,14 +143,27 @@ class HomeViewModel @Inject constructor() : ViewModel() {
 
         val itemsFilter = _uiState.value.assetDefault
         val items = itemsFilter.filter { item ->
+            val isDateInRange = if (data.dateSelected.isEmpty()) {
+                true
+            } else {
+                val startDate = (data.dateSelected.getOrNull(0))?.div(1000)
+                val endDate = (data.dateSelected.getOrNull(1))?.div(1000)?.plus(86399)
+                val itemDate = item.lastModified
+
+                if (startDate != null && endDate != null) {
+                    itemDate >= startDate && itemDate <= endDate
+                } else {
+                    true
+                }
+            }
+
             (data.activeSelected.isEmpty() || data.activeSelected.contains(item.active)) &&
                     (data.supplierSelected.isEmpty() || data.supplierSelected.contains(item.name)) &&
                     (data.citySelected.isEmpty() || data.citySelected.contains(item.city)) &&
                     (data.picSelected.isEmpty() || data.picSelected.contains(item.picName)) &&
                     (data.itemSelected.isEmpty() || item.orderList.any { orderItem ->
                         data.itemSelected.contains(orderItem.item.name)
-                    }
-                            )
+                    }) && isDateInRange
         }
         updateAssets(items)
     }
@@ -180,7 +193,11 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun resetMessageState() {
-        _uiState.value = _uiState.value.copy(deleteState = null)
+        _uiState.value = _uiState.value.copy(
+            deleteState = null,
+            activateState = null,
+            inactivateState = null
+        )
     }
 
     private fun onUpdateAsset(data: Asset) {
@@ -207,7 +224,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    private fun updateAssetsStatus(items: List<Asset>, newStatus: Boolean) {
+    private fun activateAssets(items: List<Asset>) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoadingOverlay = true)
 
@@ -215,7 +232,9 @@ class HomeViewModel @Inject constructor() : ViewModel() {
 
             val updatedAssets = _uiState.value.assets.map { asset ->
                 if (itemsToUpdate.contains(asset.id)) {
-                    asset.copy(active = newStatus)
+                    asset.copy(
+                        active = true
+                    )
                 } else {
                     asset
                 }
@@ -226,17 +245,38 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                     isLoadingOverlay = false,
                     assets = updatedAssets,
                     assetDefault = updatedAssets,
-                    itemSelected = emptyList()
+                    itemSelected = emptyList(),
+                    activateState = true
                 )
             }
         }
     }
 
-    private fun activateAssets(items: List<Asset>) {
-        updateAssetsStatus(items = items, newStatus = true)
-    }
-
     private fun inactivateAssets(items: List<Asset>) {
-        updateAssetsStatus(items = items, newStatus = false)
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoadingOverlay = true)
+
+            val itemsToUpdate = items.map { it.id }.toSet()
+
+            val updatedAssets = _uiState.value.assets.map { asset ->
+                if (itemsToUpdate.contains(asset.id)) {
+                    asset.copy(
+                        active = false
+                    )
+                } else {
+                    asset
+                }
+            }
+
+            _uiState.update {
+                it.copy(
+                    isLoadingOverlay = false,
+                    assets = updatedAssets,
+                    assetDefault = updatedAssets,
+                    itemSelected = emptyList(),
+                    inactivateState = true
+                )
+            }
+        }
     }
 }

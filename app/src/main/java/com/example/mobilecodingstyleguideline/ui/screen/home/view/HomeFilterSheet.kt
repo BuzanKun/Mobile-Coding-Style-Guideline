@@ -11,6 +11,7 @@ import com.example.mobilecodingstyleguideline.model.home.HomeFilterData
 import com.example.mobilecodingstyleguideline.ui.screen.home.uistate.HomeUiState
 import com.tagsamurai.tscomponents.bottomsheet.FilterBottomSheet
 import com.tagsamurai.tscomponents.chip.ChipSelectorWithOptionData
+import com.tagsamurai.tscomponents.datepicker.FilterDatePicker
 
 @Composable
 fun HomeFilterSheet(
@@ -85,6 +86,17 @@ fun HomeFilterSheet(
             items = uiState.filterOption.picOption,
             onChipsSelected = { result ->
                 tempFilterData = tempFilterData.copy(picSelected = result)
+            }
+        )
+        // Date Range Picker
+        FilterDatePicker(
+            title = "Last Modified",
+            value = tempFilterData.dateSelected,
+            isReset = reset,
+            onApplyConfirm = { start, end ->
+                tempFilterData = tempFilterData.copy(
+                    dateSelected = listOf(start, end)
+                )
             }
         )
     }

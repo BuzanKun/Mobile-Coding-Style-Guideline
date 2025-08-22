@@ -25,6 +25,7 @@ import com.example.mobilecodingstyleguideline.ui.screen.home.component.Status
 import com.example.mobilecodingstyleguideline.ui.screen.home.uistate.HomeUiState
 import com.example.mobilecodingstyleguideline.ui.screen.home.view.HomeActionSheet
 import com.example.mobilecodingstyleguideline.util.Asset
+import com.example.mobilecodingstyleguideline.util.DateTime
 import com.tagsamurai.common.model.Severity
 import com.tagsamurai.common.model.TypeChip
 import com.tagsamurai.tscomponents.card.AdaptiveCardItem
@@ -120,7 +121,7 @@ fun HomeItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = item.lastModified,
+                    text = DateTime.formatDateTime(item.lastModified).toString(),
                     style = bodyStyle
                 )
                 Spacer(Modifier.weight(1f))
@@ -206,7 +207,7 @@ private fun HomeItemPreview() {
             state = "DKI Jakarta",
             city = "Jakarta Utara",
             picName = "Nakamoto Y",
-            lastModified = "Fri 29 Sept 2023 13:00:01"
+            lastModified = DateTime.getCurrentDateTime()
         ),
         homeCallback = HomeCallback(),
         uiState = HomeUiState(),

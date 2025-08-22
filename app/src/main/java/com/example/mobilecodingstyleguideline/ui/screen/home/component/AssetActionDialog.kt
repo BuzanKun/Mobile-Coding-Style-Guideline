@@ -17,15 +17,13 @@ fun AssetActionDialog(
     onDialogConfirm: (List<Asset>) -> Unit,
     status: Status,
 ) {
-    if (showDialog) {
+    if (showDialog && assets.isNotEmpty()) {
         val isSingle = assets.size == 1
 
         val dialogState = when (status) {
             Status.DELETE -> DialogState(
                 titleText = "Delete Supplier",
                 submitText = "Delete",
-                successMessage = "Success, supplier has been deleted.",
-                errorMessage = "Error, failed to delete supplier. Please check your connection and try again.",
                 severity = Severity.DANGER,
                 icon = R.drawable.ic_delete_bin_6_line_24dp,
                 iconColor = theme.danger,
@@ -37,8 +35,6 @@ fun AssetActionDialog(
             Status.DOWNLOAD -> DialogState(
                 titleText = "Download",
                 submitText = "Download",
-                successMessage = "Success, data has been downloaded.",
-                errorMessage = "Error, failed to download data. Please check your connection and try again.",
                 severity = Severity.INFO,
                 icon = R.drawable.ic_file_download_line_24dp,
                 iconColor = theme.primary,
@@ -49,8 +45,6 @@ fun AssetActionDialog(
             Status.ACTIVE -> DialogState(
                 titleText = "Activate Supplier",
                 submitText = "Activate",
-                successMessage = "Success, supplier has been activated.",
-                errorMessage = "Error, failed to activate supplier. Please check your connection and try again.",
                 severity = Severity.INFO,
                 icon = R.drawable.ic_checkbox_circle_line_24dp,
                 iconColor = theme.primary,
@@ -61,8 +55,6 @@ fun AssetActionDialog(
             Status.INACTIVE -> DialogState(
                 titleText = "Inactivate Supplier",
                 submitText = "Inactivate",
-                successMessage = "Successs, supplier has been inactivated.",
-                errorMessage = "Error, failed to inactivate supplier. Please check your connection and try again.",
                 severity = Severity.DANGER,
                 icon = R.drawable.ic_information_line_24dp,
                 iconColor = theme.danger,
@@ -96,8 +88,6 @@ fun AssetActionDialog(
 data class DialogState(
     val titleText: String,
     val submitText: String,
-    val successMessage: String,
-    val errorMessage: String,
     val singleItemMessage: String,
     val multiItemMessage: String,
     val severity: Severity,

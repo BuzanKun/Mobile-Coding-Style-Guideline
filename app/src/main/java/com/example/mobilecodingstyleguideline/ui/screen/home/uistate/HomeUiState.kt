@@ -15,5 +15,7 @@ data class HomeUiState(
     val filterData: HomeFilterData = HomeFilterData(),
     val assetDefault: List<Asset> = emptyList(),
     val assets: List<Asset> = emptyList(),
-    val deleteState: Boolean? = null
+    val deleteState: Boolean? = null,
+    val activateState: Boolean? = null,
+    val inactivateState: Boolean? = null
 )
