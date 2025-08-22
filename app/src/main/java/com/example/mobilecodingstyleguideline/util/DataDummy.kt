@@ -6,7 +6,7 @@ data class Asset(
     val id: String = "",
     val active: Boolean = true,
     val name: String = "",
-    val orderList: List<OrderItem> = listOf(),
+    val orderList: List<OrderItem> = emptyList(),
     val country: String = "",
     val state: String = "",
     val city: String = "",
@@ -209,6 +209,11 @@ object DataDummy {
                 lastModified = 1724731200L
             ),
         )
+    }
+
+    fun getItemMasterList(): List<Item> {
+        val itemMasterList = listOf(itemKulkas, itemTv, itemAc, itemLaptop)
+        return itemMasterList
     }
 
     fun generateOptionsDataString(list: List<String>): List<OptionData<String>> {

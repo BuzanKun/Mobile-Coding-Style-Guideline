@@ -1,9 +1,12 @@
 package com.example.mobilecodingstyleguideline.model.createasset
 
+import com.example.mobilecodingstyleguideline.util.Item
 import com.tagsamurai.common.model.OptionData
 
 data class CreateAssetFormOption(
     val name: List<OptionData<String>> = emptyList(),
+    val itemMasterList: List<Item> = emptyList(),
+    val itemNameList: List<OptionData<String>> = emptyList(),
     val country: List<OptionData<String>> = emptyList(),
     val state: List<OptionData<String>> = emptyList(),
     val city: List<OptionData<String>> = emptyList(),

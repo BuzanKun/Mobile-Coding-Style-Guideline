@@ -37,11 +37,13 @@ class CreateAssetViewModel @Inject constructor() : ViewModel() {
                 assetId = item.id,
                 formData = CreateAssetFormData(
                     name = item.name,
+                    orderList = item.orderList,
                     country = item.country,
                     state = item.state,
                     city = item.city,
                     zipCode = item.zipCode,
                     address = item.address,
+                    countryCode = item.countryCode,
                     phoneNumber = item.phoneNumber,
                     picName = item.picName,
                     picCountryCode = item.picCountryCode,
@@ -67,6 +69,8 @@ class CreateAssetViewModel @Inject constructor() : ViewModel() {
     private fun getFormOption() {
         _uiState.value = uiState.value.copy(
             formOption = CreateAssetFormOption(
+                itemMasterList = DataDummy.getItemMasterList(),
+                itemNameList = DataDummy.generateOptionsDataString(DataDummy.getItemName()),
                 country = DataDummy.generateOptionsDataString(DataDummy.getCountry()),
                 state = DataDummy.generateOptionsDataString(DataDummy.getState()),
                 city = DataDummy.generateOptionsDataString(DataDummy.getCity()),

@@ -1,7 +1,10 @@
 package com.example.mobilecodingstyleguideline.model.createasset
 
+import com.example.mobilecodingstyleguideline.util.OrderItem
+
 data class CreateAssetFormData(
     val name: String = "",
+    val orderList: List<OrderItem> = emptyList(),
     val country: String = "",
     val state: String = "",
     val city: String = "",

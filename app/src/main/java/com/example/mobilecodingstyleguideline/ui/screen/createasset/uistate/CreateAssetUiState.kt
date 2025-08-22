@@ -19,6 +19,7 @@ data class CreateAssetUiState(
     val data = Asset(
         id = assetId,
         active = true,
+        orderList = formData.orderList,
         name = formData.name,
         country = formData.country,
         state = formData.state,
