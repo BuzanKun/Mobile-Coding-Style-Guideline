@@ -1,1 +1,0 @@
-# Mobile-Coding-Style-Guideline
