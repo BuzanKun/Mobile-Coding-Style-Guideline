@@ -8,6 +8,7 @@ import com.example.apiservices.data.source.network.model.request.supplier.Delete
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierOptionQueryParams
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierQueryParams
 import com.example.apiservices.domain.supplier.DeleteSupplierUseCase
+import com.example.apiservices.domain.supplier.EditStatusSupplierUseCase
 import com.example.apiservices.domain.supplier.GetSupplierOptionUseCase
 import com.example.apiservices.domain.supplier.GetSuppliersUseCase
 import com.example.mobilecodingstyleguideline.MainDispatcherRule
@@ -45,6 +46,9 @@ class HomeViewModelTest {
     @MockK
     private lateinit var deleteSupplierUseCase: DeleteSupplierUseCase
 
+    @MockK
+    private lateinit var editStatusSupplierUseCase: EditStatusSupplierUseCase
+
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
@@ -52,7 +56,8 @@ class HomeViewModelTest {
         viewmodel = HomeViewModel(
             getSuppliersUseCase = getSuppliersUseCase,
             getSupplierOptionUseCase = getSupplierOptionUseCase,
-            deleteSupplierUseCase = deleteSupplierUseCase
+            deleteSupplierUseCase = deleteSupplierUseCase,
+            editStatusSupplierBody = editStatusSupplierUseCase
         )
 
         callback = viewmodel.getCallback()

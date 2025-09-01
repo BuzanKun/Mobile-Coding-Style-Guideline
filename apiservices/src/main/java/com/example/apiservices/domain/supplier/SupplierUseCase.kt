@@ -5,6 +5,7 @@ import com.example.apiservices.data.source.network.model.request.supplier.Create
 import com.example.apiservices.data.source.network.model.request.supplier.DeleteSupplierBody
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierOptionQueryParams
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierQueryParams
+import com.example.apiservices.data.source.network.model.request.supplier.PatchEditStatusSupplierBody
 import javax.inject.Inject
 
 class GetSuppliersUseCase @Inject constructor(private val repository: SupplierRepository) {
@@ -31,4 +32,8 @@ class DeleteSupplierUseCase @Inject constructor(private val repository: Supplier
 class EditSupplierUseCase @Inject constructor(private val repository: SupplierRepository) {
     operator fun invoke(id: String, body: CreateUpdateSupplierBody) =
         repository.editSupplier(id, body)
+}
+
+class EditStatusSupplierUseCase @Inject constructor(private val repository: SupplierRepository) {
+    operator fun invoke(body: PatchEditStatusSupplierBody) = repository.editStatusSupplier(body)
 }

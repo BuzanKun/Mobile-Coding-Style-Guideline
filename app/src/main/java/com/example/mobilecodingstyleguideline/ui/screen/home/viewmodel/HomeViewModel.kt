@@ -6,8 +6,9 @@ import com.example.apiservices.base.Result
 import com.example.apiservices.data.model.SupplierEntity
 import com.example.apiservices.data.source.network.model.request.supplier.DeleteSupplierBody
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierOptionQueryParams
-import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierQueryParams
+import com.example.apiservices.data.source.network.model.request.supplier.PatchEditStatusSupplierBody
 import com.example.apiservices.domain.supplier.DeleteSupplierUseCase
+import com.example.apiservices.domain.supplier.EditStatusSupplierUseCase
 import com.example.apiservices.domain.supplier.GetSupplierOptionUseCase
 import com.example.apiservices.domain.supplier.GetSuppliersUseCase
 import com.example.mobilecodingstyleguideline.model.home.HomeCallback
@@ -23,9 +24,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.util.UUID
 import javax.inject.Inject
 
@@ -33,89 +31,74 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getSuppliersUseCase: GetSuppliersUseCase,
     private val getSupplierOptionUseCase: GetSupplierOptionUseCase,
-    private val deleteSupplierUseCase: DeleteSupplierUseCase
+    private val deleteSupplierUseCase: DeleteSupplierUseCase,
+    private val editStatusSupplierBody: EditStatusSupplierUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
 
     fun init() {
         initSupplier()
-        getFilterOption()
     }
 
     fun getCallback(): HomeCallback {
         return HomeCallback(
-            onRefresh = { initSupplier(isRefresh = true) },
+            onRefresh = ::onRefresh,
             onFilter = ::updateFilter,
             onSearch = ::search,
+            onShowSearch = ::showSearch,
             onUpdateItemSelected = ::updateItemSelected,
             onToggleSelectAll = ::toggleSelectAll,
             onDeleteSuppliers = ::deleteSuppliers,
             onResetMessageState = ::resetMessageState,
-            onActivateSuppliers = ::activateAssets,
-            onInactivateSuppliers = ::inactivateAssets,
+            onEditStatusSupplier = ::editStatusSupplier,
             onUpdateSupplier = ::onUpdateAsset
         )
     }
 
-    fun initSupplier(isRefresh: Boolean = false) {
-        _uiState.value = _uiState.value.copy(isLoading = true)
-
-        if (isRefresh) {
-            _uiState.value = _uiState.value.copy(
+    fun onRefresh() {
+        _uiState.update { currData ->
+            currData.copy(
                 searchQuery = "",
                 filterData = HomeFilterData(),
+                showSearch = false
             )
         }
+        init()
+    }
 
-        getSuppliersUseCase(GetSupplierQueryParams()).onEach { result ->
+    fun initSupplier() {
+        _uiState.value = _uiState.value.copy(isLoading = true)
+
+        getSuppliersUseCase(uiState.value.queryParams).onEach { result ->
             when (result) {
                 is Result.Success -> {
-                    val data = result.data.map { item ->
-                        SupplierEntity(
-                            id = item.id,
-                            status = item.status,
-                            companyName = item.companyName,
-                            item = item.item,
-                            country = item.country,
-                            state = item.state,
-                            city = item.city,
-                            zipCode = item.zipCode,
-                            companyLocation = item.companyLocation,
-                            companyPhoneNumber = item.companyPhoneNumber,
-                            picName = item.picName,
-                            picPhoneNumber = item.picPhoneNumber,
-                            picEmail = item.picEmail,
-                            updatedAt = item.updatedAt,
-                            createdAt = item.createdAt
+                    _uiState.update { currData ->
+                        currData.copy(
+                            supplier = result.data,
+                            supplierDefault = result.data,
+                            isLoading = false
                         )
                     }
-
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        supplyDefault = data,
-                        supplier = data
-                    )
                 }
 
                 is Result.Error -> {
-                    _uiState.value = _uiState.value.copy(isLoading = false)
+                    _uiState.update { currData ->
+                        currData.copy(
+                            isLoading = false
+                        )
+                    }
                 }
             }
         }.launchIn(viewModelScope)
+
+        getFilterOption()
     }
 
     fun getFilterOption() {
         _uiState.value = _uiState.value.copy(isLoadingGroup = true)
 
-        val optionQueryParams = GetSupplierOptionQueryParams(
-            supplierOption = true,
-            cityOption = true,
-            itemNameOption = true,
-            modifiedByOption = true
-        )
-
-        getSupplierOptionUseCase(optionQueryParams).onEach { result ->
+        getSupplierOptionUseCase(GetSupplierOptionQueryParams()).onEach { result ->
             when (result) {
                 is Result.Success -> {
                     val data = result.data
@@ -143,42 +126,15 @@ class HomeViewModel @Inject constructor(
     }
 
     fun search(query: String) {
-        val query = query.trim()
         _uiState.value = _uiState.value.copy(searchQuery = query)
 
-        val itemsFilter = _uiState.value.supplier
-        val items = if (query.isBlank()) {
-            itemsFilter
-        } else {
-            itemsFilter.filter { item ->
-                val queryMatch = listOf(
-                    item.companyName,
-                    item.state,
-                    item.city,
-                    item.country,
-                    item.picName
-                ).any {
-                    it.contains(query, ignoreCase = true)
-                }
-
-                val itemQueryMatch = item.item.any { orderItem ->
-                    orderItem.itemName.contains(query, ignoreCase = true)
-                }
-
-                queryMatch || itemQueryMatch
-            }
-        }
-        updateAssets(items)
+        init()
     }
 
-    private fun updateAssets(supplies: List<SupplierEntity>) {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
-            delay(1000)
-
-            _uiState.value = _uiState.value.copy(
-                isLoading = false,
-                supplier = supplies
+    fun showSearch(searchStatus: Boolean) {
+        _uiState.update { currData ->
+            currData.copy(
+                showSearch = searchStatus
             )
         }
     }
@@ -210,41 +166,7 @@ class HomeViewModel @Inject constructor(
     private fun updateFilter(data: HomeFilterData) {
         _uiState.value = _uiState.value.copy(filterData = data)
 
-        val itemsFilter = _uiState.value.supplier
-        val items = itemsFilter.filter { item ->
-            val isDateInRange = if (data.dateSelected.isEmpty()) {
-                true
-            } else {
-                val startMillis = data.dateSelected.getOrNull(0)
-                val endMillis = data.dateSelected.getOrNull(1)?.plus(86399999L)
-
-                val startDate = startMillis?.let {
-                    ZonedDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
-                }
-                val endDate = endMillis?.let {
-                    ZonedDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
-                }
-
-                val itemDate = ZonedDateTime.parse(item.updatedAt)
-
-                if (startDate != null && endDate != null && itemDate != null) {
-                    !itemDate.isBefore(startDate) && !itemDate.isAfter(endDate)
-                } else {
-                    true
-                }
-            }
-
-
-            (data.activeSelected.isEmpty() || data.activeSelected.contains(item.status)) &&
-                    (data.supplierSelected.isEmpty() || data.supplierSelected.contains(item.companyName)) &&
-                    (data.citySelected.isEmpty() || data.citySelected.contains(item.city)) &&
-                    (data.picSelected.isEmpty() || data.picSelected.contains(item.picName)) &&
-                    (data.itemSelected.isEmpty() || item.item.any { orderItem ->
-                        data.itemSelected.contains(orderItem.itemName)
-                    })
-                    && isDateInRange
-        }
-        updateAssets(items)
+        init()
     }
 
     private fun deleteSuppliers(itemIds: List<String>) {
@@ -280,8 +202,7 @@ class HomeViewModel @Inject constructor(
     private fun resetMessageState() {
         _uiState.value = _uiState.value.copy(
             deleteState = null,
-            activateState = null,
-            inactivateState = null
+            statusState = null,
         )
     }
 
@@ -304,64 +225,44 @@ class HomeViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(
                 isLoading = false,
                 supplier = assets,
-                supplyDefault = assets
+                supplierDefault = assets
             )
         }
     }
 
-    private fun activateAssets(items: List<SupplierEntity>) {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoadingOverlay = true)
+    private fun editStatusSupplier(supplier: List<SupplierEntity>, newStatus: Boolean) {
+        _uiState.value = _uiState.value.copy(isLoadingOverlay = true)
+        val supplierId = supplier.map { it.id }
+        val body = PatchEditStatusSupplierBody(supplierId, newStatus)
+        editStatusSupplierBody.invoke(body).onEach { result ->
+            when (result) {
+                is Result.Success -> {
+                    _uiState.update { currData ->
+                        currData.copy(
+                            isLoadingOverlay = false,
+                            isActive = newStatus,
+                            statusState = true,
+                            supplier = _uiState.value.supplier.map { supplier ->
+                                if (supplierId.contains(supplier.id)) {
+                                    supplier.copy(status = newStatus)
+                                } else {
+                                    supplier
+                                }
+                            }
+                        )
+                    }
+                    init()
+                }
 
-            val itemsToUpdate = items.map { it.id }.toSet()
-
-            val updatedAssets = _uiState.value.supplier.map { asset ->
-                if (itemsToUpdate.contains(asset.id)) {
-                    asset.copy(
-                        status = true
-                    )
-                } else {
-                    asset
+                is Result.Error -> {
+                    _uiState.update { currData ->
+                        currData.copy(
+                            isLoadingOverlay = false,
+                            statusState = false
+                        )
+                    }
                 }
             }
-
-            _uiState.update {
-                it.copy(
-                    isLoadingOverlay = false,
-                    supplier = updatedAssets,
-                    supplyDefault = updatedAssets,
-                    itemSelected = emptyList(),
-                    activateState = true
-                )
-            }
-        }
-    }
-
-    private fun inactivateAssets(items: List<SupplierEntity>) {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoadingOverlay = true)
-
-            val itemsToUpdate = items.map { it.id }.toSet()
-
-            val updatedAssets = _uiState.value.supplier.map { asset ->
-                if (itemsToUpdate.contains(asset.id)) {
-                    asset.copy(
-                        status = false
-                    )
-                } else {
-                    asset
-                }
-            }
-
-            _uiState.update {
-                it.copy(
-                    isLoadingOverlay = false,
-                    supplier = updatedAssets,
-                    supplyDefault = updatedAssets,
-                    itemSelected = emptyList(),
-                    inactivateState = true
-                )
-            }
-        }
+        }.launchIn(viewModelScope)
     }
 }

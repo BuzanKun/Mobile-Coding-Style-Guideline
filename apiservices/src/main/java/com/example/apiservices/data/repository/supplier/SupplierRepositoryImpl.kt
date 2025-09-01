@@ -9,6 +9,7 @@ import com.example.apiservices.data.source.network.model.request.supplier.Create
 import com.example.apiservices.data.source.network.model.request.supplier.DeleteSupplierBody
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierOptionQueryParams
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierQueryParams
+import com.example.apiservices.data.source.network.model.request.supplier.PatchEditStatusSupplierBody
 import com.example.apiservices.di.IODispatcher
 import com.example.apiservices.util.Constant
 import kotlinx.coroutines.CoroutineDispatcher
@@ -22,7 +23,7 @@ class SupplierRepositoryImpl @Inject constructor(
     private val supplierApiDataSource: SupplierApiDataSource,
     private val supplierMapper: SupplierMapper,
     @IODispatcher private val ioDispatcher: CoroutineDispatcher,
-    private var token: String = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTYyNzc4MzQsImlkIjoiNjdjNTc3NjIwZmMwOWJmZWZhM2EzNzI1IiwibmFtZSI6ImFzYWQiLCJyb2xlIjoidXNlciJ9.F_5RBbRsiF2ArQockgufM1gfcwwmttI7I_-4aB2t0x8"
+    private var token: String = Constant.BEARER_TOKEN
 ) : SupplierRepository {
     override fun getSupplierList(query: GetSupplierQueryParams): Flow<Result<List<SupplierEntity>>> =
         flow {
@@ -112,6 +113,23 @@ class SupplierRepositoryImpl @Inject constructor(
     ): Flow<Result<Unit>> = flow {
         if (token.isNotBlank()) {
             val response = supplierApiDataSource.editSupplier(token, path, body)
+            if (response.isSuccessful && response.code() == 200) {
+                emit(Result.Success(Unit))
+            } else {
+                emit(Result.Error(Constant.RESPONSE_ERROR))
+            }
+        } else {
+            emit(Result.Error(Constant.EMPTY_TOKEN_ERROR))
+        }
+    }.catch {
+        emit(Result.Error(it.message))
+    }.flowOn(ioDispatcher)
+
+    override fun editStatusSupplier(
+        body: PatchEditStatusSupplierBody
+    ): Flow<Result<Unit>> = flow {
+        if (token.isNotBlank()) {
+            val response = supplierApiDataSource.editStatusSupplier(token, body)
             if (response.isSuccessful && response.code() == 200) {
                 emit(Result.Success(Unit))
             } else {

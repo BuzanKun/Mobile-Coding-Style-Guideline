@@ -7,6 +7,7 @@ import com.example.apiservices.data.source.network.model.request.supplier.Create
 import com.example.apiservices.data.source.network.model.request.supplier.DeleteSupplierBody
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierOptionQueryParams
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierQueryParams
+import com.example.apiservices.data.source.network.model.request.supplier.PatchEditStatusSupplierBody
 import kotlinx.coroutines.flow.Flow
 
 interface SupplierRepository {
@@ -21,4 +22,6 @@ interface SupplierRepository {
     fun deleteSupplier(body: DeleteSupplierBody): Flow<Result<Unit>>
 
     fun editSupplier(path: String, body: CreateUpdateSupplierBody): Flow<Result<Unit>>
+
+    fun editStatusSupplier(body: PatchEditStatusSupplierBody): Flow<Result<Unit>>
 }

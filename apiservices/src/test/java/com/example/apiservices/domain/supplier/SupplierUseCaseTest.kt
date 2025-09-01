@@ -8,6 +8,7 @@ import com.example.apiservices.data.source.network.model.request.supplier.Create
 import com.example.apiservices.data.source.network.model.request.supplier.DeleteSupplierBody
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierOptionQueryParams
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierQueryParams
+import com.example.apiservices.data.source.network.model.request.supplier.PatchEditStatusSupplierBody
 import com.example.apiservices.util.Constant
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -449,6 +450,50 @@ class SupplierUseCaseTest {
 
         // Act
         val result = editSupplierUseCase.invoke(id, body).first()
+
+        // Assert
+        assertThat(result).isInstanceOf(Result.Error::class.java)
+        assertThat((result as Result.Error).message).isEqualTo(error)
+    }
+
+    // DeleteSupplierUseCase Test
+    private val editStatusSupplierUseCase = EditStatusSupplierUseCase(supplierRepository)
+
+    @Test
+    fun `invoke edits supplier's status successfully`() = runTest {
+        // Arrange
+        val body =
+            PatchEditStatusSupplierBody(
+                listOf(
+                    "SupplierID 1",
+                    "SupplierID 2"
+                )
+            )
+
+        coEvery {
+            supplierRepository.editStatusSupplier(body)
+        } returns flowOf(Result.Success(Unit))
+
+        // Act
+        val result = editStatusSupplierUseCase.invoke(body).first()
+
+        // Assert
+        assertThat(result).isInstanceOf(Result.Success::class.java)
+        assertThat((result as Result.Success).data).isEqualTo(Unit)
+    }
+
+    @Test
+    fun `invoke returns error when status edition fails`() = runTest {
+        // Arrange
+        val body = PatchEditStatusSupplierBody()
+        val error = Constant.UNEXPECTED_ERROR
+
+        coEvery {
+            supplierRepository.editStatusSupplier(body)
+        } returns flowOf(Result.Error(error))
+
+        // Act
+        val result = editStatusSupplierUseCase.invoke(body).first()
 
         // Assert
         assertThat(result).isInstanceOf(Result.Error::class.java)

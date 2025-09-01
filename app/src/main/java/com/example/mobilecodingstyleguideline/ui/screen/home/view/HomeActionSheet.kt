@@ -29,8 +29,7 @@ fun HomeActionSheet(
     onDetail: (() -> Unit)? = null,
     onEdit: (() -> Unit)? = null,
     onDelete: () -> Unit,
-    onActivate: (() -> Unit)? = null,
-    onInactivate: (() -> Unit)? = null
+    onStatusChange: (Boolean) -> Unit
 ) {
     BottomSheet(
         onDismissRequest = onDismissRequest,
@@ -50,8 +49,8 @@ fun HomeActionSheet(
                     Spacer(modifier = Modifier.weight(1f))
                     Switch(
                         checked = item.status,
-                        onCheckedChange = {
-                            if (item.status) onInactivate?.invoke() else onActivate?.invoke()
+                        onCheckedChange = { newStatus ->
+                            onStatusChange(newStatus)
                         }
                     )
                 }
@@ -68,12 +67,12 @@ fun HomeActionSheet(
                 )
             } else {
                 ActionButton(
-                    onClickAction = { onActivate?.invoke() },
+                    onClickAction = { onStatusChange(true) },
                     icon = R.drawable.ic_check_line_24dp,
                     title = "Activate"
                 )
                 ActionButton(
-                    onClickAction = { onInactivate?.invoke() },
+                    onClickAction = { onStatusChange(false) },
                     icon = R.drawable.ic_close_line_24dp,
                     title = "Deactivate"
                 )

@@ -2,17 +2,20 @@ package com.example.apiservices.data.source.network.services
 
 import com.example.apiservices.data.source.network.model.request.supplier.CreateUpdateSupplierBody
 import com.example.apiservices.data.source.network.model.request.supplier.DeleteSupplierBody
+import com.example.apiservices.data.source.network.model.request.supplier.PatchEditStatusSupplierBody
 import com.example.apiservices.data.source.network.model.response.supplier.CreateSupplierResponse
 import com.example.apiservices.data.source.network.model.response.supplier.DeleteSupplierResponse
 import com.example.apiservices.data.source.network.model.response.supplier.GetSupplierByIdResponse
 import com.example.apiservices.data.source.network.model.response.supplier.GetSupplierOptionResponse
 import com.example.apiservices.data.source.network.model.response.supplier.GetSupplierResponse
+import com.example.apiservices.data.source.network.model.response.supplier.PatchEditStatusSupplierResponse
 import com.example.apiservices.data.source.network.model.response.supplier.PutEditSupplierResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.HTTP
 import retrofit2.http.Header
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -55,4 +58,10 @@ interface SupplierApi {
         @Path("id") id: String,
         @Body body: CreateUpdateSupplierBody
     ): Response<PutEditSupplierResponse>
+
+    @PATCH("/v2/supplier")
+    suspend fun editStatusSupplier(
+        @Header("Authorization") token: String,
+        @Body body: PatchEditStatusSupplierBody
+    ): Response<PatchEditStatusSupplierResponse>
 }

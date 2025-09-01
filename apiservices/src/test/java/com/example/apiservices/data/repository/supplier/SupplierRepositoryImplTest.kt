@@ -10,11 +10,13 @@ import com.example.apiservices.data.source.network.model.request.supplier.Create
 import com.example.apiservices.data.source.network.model.request.supplier.DeleteSupplierBody
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierOptionQueryParams
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierQueryParams
+import com.example.apiservices.data.source.network.model.request.supplier.PatchEditStatusSupplierBody
 import com.example.apiservices.data.source.network.model.response.supplier.CreateSupplierResponse
 import com.example.apiservices.data.source.network.model.response.supplier.DeleteSupplierResponse
 import com.example.apiservices.data.source.network.model.response.supplier.GetSupplierByIdResponse
 import com.example.apiservices.data.source.network.model.response.supplier.GetSupplierOptionResponse
 import com.example.apiservices.data.source.network.model.response.supplier.GetSupplierResponse
+import com.example.apiservices.data.source.network.model.response.supplier.PatchEditStatusSupplierResponse
 import com.example.apiservices.data.source.network.model.response.supplier.PutEditSupplierResponse
 import com.example.apiservices.util.Constant
 import com.google.common.truth.Truth.assertThat
@@ -50,8 +52,7 @@ class SupplierRepositoryImplTest {
     @MockK
     private lateinit var supplierMapper: SupplierMapper
 
-    private var token =
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTYyNzc4MzQsImlkIjoiNjdjNTc3NjIwZmMwOWJmZWZhM2EzNzI1IiwibmFtZSI6ImFzYWQiLCJyb2xlIjoidXNlciJ9.F_5RBbRsiF2ArQockgufM1gfcwwmttI7I_-4aB2t0x8"
+    private var token = Constant.BEARER_TOKEN
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
@@ -957,6 +958,128 @@ class SupplierRepositoryImplTest {
             val result = supplierRepository.editSupplier(
                 body = editBody,
                 path = id
+            ).first()
+
+            // Assert
+            assertThat(result).isInstanceOf(Result.Error::class.java)
+            assertThat((result as Result.Error).message).isEqualTo(expectedMsg)
+        }
+    }
+
+    // editStatusSupplier() Test
+    @Test
+    fun `when editStatusSupplier() response is successful should emit result success`() {
+        runTest {
+            // Arrange
+            val apiResponse = mockk<PatchEditStatusSupplierResponse> {
+                coEvery { data } returns mockk()
+            }
+            val body = PatchEditStatusSupplierBody()
+
+            coEvery {
+                supplierApiDataSource.editStatusSupplier(
+                    token = token,
+                    body = body
+                )
+            } returns Response.success(200, apiResponse)
+
+            // Act
+            val result = supplierRepository.editStatusSupplier(body).first()
+
+            // Assert
+            assertThat(result).isInstanceOf(Result.Success::class.java)
+        }
+    }
+
+    @Test
+    fun `when editStatusSupplier() response is successful but code is not 200 should emit result error`() {
+        runTest {
+            // Arrange
+            val createBody = PatchEditStatusSupplierBody()
+            val expectedMsg = Constant.RESPONSE_ERROR
+
+            coEvery {
+                supplierApiDataSource.editStatusSupplier(
+                    token = token,
+                    body = createBody
+                )
+            } returns mockk {
+                coEvery { isSuccessful } returns true
+                coEvery { code() } returns 400 // Not 200
+                coEvery { body() } returns PatchEditStatusSupplierResponse()
+            }
+
+            // Act
+            val result = supplierRepository.editStatusSupplier(createBody).first()
+
+            // Assert
+            assertThat(result).isInstanceOf(Result.Error::class.java)
+            assertThat((result as Result.Error).message).isEqualTo(expectedMsg)
+        }
+    }
+
+    @Test
+    fun `when editStatusSupplier() response is not successful should emit result error`() {
+        runTest {
+            // Arrange
+            val createBody = PatchEditStatusSupplierBody()
+            val expectedMsg = Constant.RESPONSE_ERROR
+
+            coEvery {
+                supplierApiDataSource.editStatusSupplier(
+                    token = token,
+                    body = createBody
+                )
+            } returns Response.error(400, "".toResponseBody())
+
+            // Act
+            val result = supplierRepository.editStatusSupplier(createBody).first()
+
+            // Assert
+            assertThat(result).isInstanceOf(Result.Error::class.java)
+            assertThat((result as Result.Error).message).isEqualTo(expectedMsg)
+        }
+    }
+
+    @Test
+    fun `when editStatusSupplier() token is empty should emit result error`() {
+        runTest {
+            // Arrange
+            val expectedMsg = Constant.EMPTY_TOKEN_ERROR
+            val emptyTokenSupplierRepository = SupplierRepositoryImpl(
+                supplierApiDataSource = supplierApiDataSource,
+                supplierMapper = supplierMapper,
+                ioDispatcher = dispatcherRule.testDispatcher,
+                token = ""
+            )
+
+            // Act
+            val result = emptyTokenSupplierRepository.editStatusSupplier(
+                body = PatchEditStatusSupplierBody()
+            ).first()
+
+            // Assert
+            assertThat(result).isInstanceOf(Result.Error::class.java)
+            assertThat((result as Result.Error).message).isEqualTo(expectedMsg)
+        }
+    }
+
+    @Test
+    fun `when editStatusSupplier() data source throw error should emit result error`() {
+        runTest {
+            val createBody = PatchEditStatusSupplierBody()
+            coEvery {
+                supplierApiDataSource.editStatusSupplier(
+                    token = token,
+                    body = createBody
+                )
+            } throws Exception(Constant.UNEXPECTED_ERROR)
+
+            val expectedMsg = Constant.UNEXPECTED_ERROR
+
+            // Act
+            val result = supplierRepository.editStatusSupplier(
+                body = createBody
             ).first()
 
             // Assert

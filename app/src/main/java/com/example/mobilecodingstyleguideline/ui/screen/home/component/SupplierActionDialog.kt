@@ -10,7 +10,7 @@ import com.tagsamurai.tscomponents.theme.theme
 import com.tagsamurai.tscomponents.utils.Utils.generateAnnotated
 
 @Composable
-fun AssetActionDialog(
+fun SupplierActionDialog(
     onDismissRequest: (Boolean) -> Unit,
     supplies: List<SupplierEntity>,
     showDialog: Boolean,

@@ -55,6 +55,19 @@ fun HomeScreen(
     var data: SupplierEntity? by remember { mutableStateOf(null) }
     var showCreateDialog by remember { mutableStateOf(false) }
 
+    val statusSuccessMessage: String
+    val statusErrorMessage: String
+
+    if (uiState.isActive) {
+        statusSuccessMessage = "Success, supplier has been activated."
+        statusErrorMessage =
+            "Error, failed to activate supplier. Please check your connection and try again."
+    } else {
+        statusSuccessMessage = "Successs, supplier has been inactivated."
+        statusErrorMessage =
+            "Error, failed to inactivate supplier. Please check your connection and try again."
+    }
+
     // Delete State
     HandleState(
         state = uiState.deleteState,
@@ -66,19 +79,10 @@ fun HomeScreen(
 
     // Activate State
     HandleState(
-        state = uiState.activateState,
+        state = uiState.statusState,
         onShowSnackBar = onShowSnackBar,
-        successMsg = "Success, supplier has been activated.",
-        errorMsg = "Error, failed to activate supplier. Please check your connection and try again.",
-        onDispose = homeCallback.onResetMessageState
-    )
-
-    // Inactivate State
-    HandleState(
-        state = uiState.inactivateState,
-        onShowSnackBar = onShowSnackBar,
-        successMsg = "Successs, supplier has been inactivated.",
-        errorMsg = "Error, failed to inactivate supplier. Please check your connection and try again.",
+        successMsg = statusSuccessMessage,
+        errorMsg = statusErrorMessage,
         onDispose = homeCallback.onResetMessageState
     )
 

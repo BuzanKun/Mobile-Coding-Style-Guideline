@@ -4,13 +4,16 @@ import com.example.apiservices.data.source.network.model.request.supplier.Create
 import com.example.apiservices.data.source.network.model.request.supplier.DeleteSupplierBody
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierOptionQueryParams
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierQueryParams
+import com.example.apiservices.data.source.network.model.request.supplier.PatchEditStatusSupplierBody
 import com.example.apiservices.data.source.network.model.response.supplier.CreateSupplierResponse
 import com.example.apiservices.data.source.network.model.response.supplier.DeleteSupplierResponse
 import com.example.apiservices.data.source.network.model.response.supplier.GetSupplierByIdResponse
 import com.example.apiservices.data.source.network.model.response.supplier.GetSupplierOptionResponse
 import com.example.apiservices.data.source.network.model.response.supplier.GetSupplierResponse
+import com.example.apiservices.data.source.network.model.response.supplier.PatchEditStatusSupplierResponse
 import com.example.apiservices.data.source.network.model.response.supplier.PutEditSupplierResponse
 import com.example.apiservices.data.source.network.services.SupplierApi
+import com.example.apiservices.util.Constant
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -35,8 +38,7 @@ class SupplierApiDataSourceImplTest {
     @MockK
     private lateinit var supplierApi: SupplierApi
 
-    private var token =
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTYyNzc4MzQsImlkIjoiNjdjNTc3NjIwZmMwOWJmZWZhM2EzNzI1IiwibmFtZSI6ImFzYWQiLCJyb2xlIjoidXNlciJ9.F_5RBbRsiF2ArQockgufM1gfcwwmttI7I_-4aB2t0x8"
+    private var token = Constant.BEARER_TOKEN
 
     @Before
     fun setUp() {
@@ -307,6 +309,50 @@ class SupplierApiDataSourceImplTest {
             // Act
             val result =
                 supplierApiDataSource.editSupplier(token = token, body = deleteBody, id = id)
+
+            // Assert
+            assertThat(result).isEqualTo(response)
+        }
+    }
+
+    // editStatusSupplier() Test
+    @Test
+    fun `when editStatusSupplier() success returns PatchEditStatusSupplierResponse`() = runTest {
+        // Arrange
+        val deleteBody = PatchEditStatusSupplierBody()
+        val response = Response.success(PatchEditStatusSupplierResponse())
+
+        coEvery {
+            supplierApi.editStatusSupplier(
+                token = token,
+                body = deleteBody
+            )
+        } returns response
+
+        // Act
+        val result = supplierApiDataSource.editStatusSupplier(token = token, body = deleteBody)
+
+        // Assert
+        assertThat(result).isEqualTo(response)
+    }
+
+    @Test
+    fun `when editStatusSupplier() error returns PatchEditStatusSupplierResponse`() {
+        runTest {
+            // Arrange
+            val deleteBody = PatchEditStatusSupplierBody()
+            val response = Response.error<PatchEditStatusSupplierResponse>(400, "".toResponseBody())
+
+            coEvery {
+                supplierApi.editStatusSupplier(
+                    token = token,
+                    body = deleteBody
+                )
+            } returns response
+
+            // Act
+            val result =
+                supplierApiDataSource.editStatusSupplier(token = token, body = deleteBody)
 
             // Assert
             assertThat(result).isEqualTo(response)

@@ -81,11 +81,11 @@ fun HomeFilterSheet(
         )
         ChipSelectorWithOptionData(
             title = "Modified By",
-            value = tempFilterData.picSelected,
+            value = tempFilterData.modifierSelected,
             isReset = reset,
             items = uiState.filterOption.modifiedByOption,
             onChipsSelected = { result ->
-                tempFilterData = tempFilterData.copy(picSelected = result)
+                tempFilterData = tempFilterData.copy(modifierSelected = result)
             }
         )
         // Date Range Picker

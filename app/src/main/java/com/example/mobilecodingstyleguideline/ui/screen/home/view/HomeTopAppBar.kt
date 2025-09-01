@@ -6,8 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.mobilecodingstyleguideline.model.home.HomeCallback
-import com.example.mobilecodingstyleguideline.ui.screen.home.component.AssetActionDialog
 import com.example.mobilecodingstyleguideline.ui.screen.home.component.Status
+import com.example.mobilecodingstyleguideline.ui.screen.home.component.SupplierActionDialog
 import com.example.mobilecodingstyleguideline.ui.screen.home.uistate.HomeUiState
 import com.tagsamurai.tscomponents.menu.model.Menu
 import com.tagsamurai.tscomponents.textfield.SearchFieldTopAppBar
@@ -18,18 +18,18 @@ fun HomeTopAppBar(
     uiState: HomeUiState,
     homeCallback: HomeCallback
 ) {
-    var showSearch by remember { mutableStateOf(false) }
     var showFilterSheet by remember { mutableStateOf(false) }
     var showActionSheet by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showDownloadDialog by remember { mutableStateOf(false) }
-    var showActivateDialog by remember { mutableStateOf(false) }
-    var showInactivateDialog by remember { mutableStateOf(false) }
+    var showStatusChangeDialog by remember { mutableStateOf(false) }
+    var newStatusToApply by remember { mutableStateOf(true) }
+
     val listMenu = getListMenu(uiState)
 
-    if (showSearch) {
+    if (uiState.showSearch) {
         SearchFieldTopAppBar(
-            onNavigateUp = { showSearch = false },
+            onNavigateUp = { homeCallback.onShowSearch(false) },
             onSearchConfirm = homeCallback.onSearch
         )
     } else {
@@ -38,7 +38,7 @@ fun HomeTopAppBar(
             canNavigateBack = true,
             onMenuAction = { menu ->
                 when (menu) {
-                    Menu.SEARCH -> showSearch = true
+                    Menu.SEARCH -> homeCallback.onShowSearch(true)
                     Menu.FILTER -> showFilterSheet = true
                     Menu.SELECT_ALL, Menu.UNSELECT_ALL -> homeCallback.onToggleSelectAll()
                     Menu.OTHER -> showActionSheet = true
@@ -65,12 +65,14 @@ fun HomeTopAppBar(
         showSheet = showActionSheet,
         uiState = uiState,
         onDelete = { showDeleteDialog = true },
-        onActivate = { showActivateDialog = true },
-        onInactivate = { showInactivateDialog = true }
+        onStatusChange = { newStatus ->
+            showStatusChangeDialog = true
+            newStatusToApply = newStatus
+        }
     )
 
     // Delete Dialog
-    AssetActionDialog(
+    SupplierActionDialog(
         onDismissRequest = { state -> showDeleteDialog = state },
         supplies = uiState.itemSelected,
         showDialog = showDeleteDialog,
@@ -82,7 +84,7 @@ fun HomeTopAppBar(
     )
 
     // Download Dialog
-    AssetActionDialog(
+    SupplierActionDialog(
         onDismissRequest = { state -> showDownloadDialog = state },
         supplies = uiState.supplier,
         showDialog = showDownloadDialog,
@@ -92,28 +94,16 @@ fun HomeTopAppBar(
         status = Status.DOWNLOAD
     )
 
-    // Activate Dialog
-    AssetActionDialog(
-        onDismissRequest = { state -> showActivateDialog = state },
+    // Status Change Dialog Dialog
+    SupplierActionDialog(
+        onDismissRequest = { state -> showStatusChangeDialog = state },
         supplies = uiState.itemSelected,
-        showDialog = showActivateDialog,
+        showDialog = showStatusChangeDialog,
         onDialogConfirm = { value ->
             showActionSheet = false
-            homeCallback.onActivateSuppliers(value)
+            homeCallback.onEditStatusSupplier(value, newStatusToApply)
         },
-        status = Status.ACTIVE
-    )
-
-    // Inactivate Dialog
-    AssetActionDialog(
-        onDismissRequest = { state -> showInactivateDialog = state },
-        supplies = uiState.itemSelected,
-        showDialog = showInactivateDialog,
-        onDialogConfirm = { value ->
-            showActionSheet = false
-            homeCallback.onInactivateSuppliers(value)
-        },
-        status = Status.INACTIVE
+        status = if (newStatusToApply) Status.INACTIVE else Status.ACTIVE
     )
 }
 

@@ -1,5 +1,6 @@
 package com.example.apiservices.data.source.network.services
 
+import com.example.apiservices.util.Constant
 import com.google.common.truth.Truth.assertThat
 import io.mockk.unmockkAll
 import kotlinx.coroutines.runBlocking
@@ -14,8 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class SupplierApiTest {
     private lateinit var mockWebServer: MockWebServer
     private lateinit var api: SupplierApi
-    private val token =
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTYyNzc4MzQsImlkIjoiNjdjNTc3NjIwZmMwOWJmZWZhM2EzNzI1IiwibmFtZSI6ImFzYWQiLCJyb2xlIjoidXNlciJ9.F_5RBbRsiF2ArQockgufM1gfcwwmttI7I_-4aB2t0x8"
+    private val token = Constant.BEARER_TOKEN
 
     @Before
     fun setUp() {

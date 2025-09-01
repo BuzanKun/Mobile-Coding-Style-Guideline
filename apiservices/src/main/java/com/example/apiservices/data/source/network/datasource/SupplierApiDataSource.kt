@@ -4,11 +4,13 @@ import com.example.apiservices.data.source.network.model.request.supplier.Create
 import com.example.apiservices.data.source.network.model.request.supplier.DeleteSupplierBody
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierOptionQueryParams
 import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierQueryParams
+import com.example.apiservices.data.source.network.model.request.supplier.PatchEditStatusSupplierBody
 import com.example.apiservices.data.source.network.model.response.supplier.CreateSupplierResponse
 import com.example.apiservices.data.source.network.model.response.supplier.DeleteSupplierResponse
 import com.example.apiservices.data.source.network.model.response.supplier.GetSupplierByIdResponse
 import com.example.apiservices.data.source.network.model.response.supplier.GetSupplierOptionResponse
 import com.example.apiservices.data.source.network.model.response.supplier.GetSupplierResponse
+import com.example.apiservices.data.source.network.model.response.supplier.PatchEditStatusSupplierResponse
 import com.example.apiservices.data.source.network.model.response.supplier.PutEditSupplierResponse
 import retrofit2.Response
 
@@ -43,4 +45,9 @@ interface SupplierApiDataSource {
         id: String,
         body: CreateUpdateSupplierBody
     ): Response<PutEditSupplierResponse>
+
+    suspend fun editStatusSupplier(
+        token: String,
+        body: PatchEditStatusSupplierBody
+    ): Response<PatchEditStatusSupplierResponse>
 }

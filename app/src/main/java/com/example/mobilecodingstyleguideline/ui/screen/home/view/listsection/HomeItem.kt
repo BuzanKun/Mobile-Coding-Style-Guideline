@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.example.apiservices.data.model.SupplierEntity
 import com.example.mobilecodingstyleguideline.model.home.HomeCallback
 import com.example.mobilecodingstyleguideline.navigation.NavigationRoute
-import com.example.mobilecodingstyleguideline.ui.screen.home.component.AssetActionDialog
 import com.example.mobilecodingstyleguideline.ui.screen.home.component.Status
+import com.example.mobilecodingstyleguideline.ui.screen.home.component.SupplierActionDialog
 import com.example.mobilecodingstyleguideline.ui.screen.home.uistate.HomeUiState
 import com.example.mobilecodingstyleguideline.ui.screen.home.view.HomeActionSheet
 import com.example.mobilecodingstyleguideline.util.DateTime
@@ -48,8 +48,7 @@ fun HomeItem(
     val isSelected = uiState.itemSelected.contains(item)
     var showActionSheet by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
-    var showActivateDialog by remember { mutableStateOf(false) }
-    var showInactivateDialog by remember { mutableStateOf(false) }
+    var showStatusChangeDialog by remember { mutableStateOf(false) }
     val chipItemLimit = 2
 
     val location =
@@ -142,13 +141,12 @@ fun HomeItem(
             onEditAsset(item)
         },
         onDelete = { showDeleteDialog = true },
-        onActivate = { showActivateDialog = true },
-        onInactivate = { showInactivateDialog = true },
+        onStatusChange = { showStatusChangeDialog = true },
         item = item
     )
 
     // Delete Dialog
-    AssetActionDialog(
+    SupplierActionDialog(
         onDismissRequest = { showDeleteDialog = it },
         supplies = listOf(item),
         showDialog = showDeleteDialog,
@@ -159,28 +157,17 @@ fun HomeItem(
         status = Status.DELETE
     )
 
-    // Activate Dialog
-    AssetActionDialog(
-        onDismissRequest = { state -> showActivateDialog = state },
+    // Status Change Dialog
+    SupplierActionDialog(
+        onDismissRequest = { state -> showStatusChangeDialog = state },
         supplies = listOf(item),
-        showDialog = showActivateDialog,
+        showDialog = showStatusChangeDialog,
         onDialogConfirm = { value ->
             showActionSheet = false
-            homeCallback.onActivateSuppliers(value)
+            val newStatus = !item.status
+            homeCallback.onEditStatusSupplier(value, newStatus)
         },
-        status = Status.ACTIVE
-    )
-
-    // Inactivate Dialog
-    AssetActionDialog(
-        onDismissRequest = { state -> showInactivateDialog = state },
-        supplies = listOf(item),
-        showDialog = showInactivateDialog,
-        onDialogConfirm = { value ->
-            showActionSheet = false
-            homeCallback.onInactivateSuppliers(value)
-        },
-        status = Status.INACTIVE
+        status = if (item.status) Status.INACTIVE else Status.ACTIVE
     )
 }
 
