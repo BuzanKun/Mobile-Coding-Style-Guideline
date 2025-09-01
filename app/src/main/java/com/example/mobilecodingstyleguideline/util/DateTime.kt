@@ -1,23 +1,21 @@
 package com.example.mobilecodingstyleguideline.util
 
-import java.time.Instant
-import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 object DateTime {
-    fun getCurrentDateTime(): Long {
+    fun getCurrentDateTime(): String {
         val currentTime = ZonedDateTime.now(ZoneOffset.UTC)
 
-        return currentTime.toEpochSecond()
+        val timeInString = currentTime.toString()
+
+        return timeInString
     }
 
-    fun formatDateTime(date: Long = 0L): String? {
-        val instant = Instant.ofEpochSecond(date)
-
-        val dateTime = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault())
+    fun formatDateTime(date: String? = null): String {
+        val dateTime = ZonedDateTime.parse(date)
 
         val formatter = DateTimeFormatter.ofPattern("eee dd MMM yyyy HH:mm:ss", Locale.ENGLISH)
 

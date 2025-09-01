@@ -10,10 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.apiservices.data.model.SupplierEntity
 import com.example.mobilecodingstyleguideline.model.home.HomeCallback
 import com.example.mobilecodingstyleguideline.ui.screen.home.uistate.HomeUiState
-import com.example.mobilecodingstyleguideline.util.Asset
-import com.example.mobilecodingstyleguideline.util.DataDummy
 import com.tagsamurai.tscomponents.pullrefresh.PullRefresh
 import com.tagsamurai.tscomponents.screen.EmptyState
 import com.tagsamurai.tscomponents.utils.Spacer.heightBox
@@ -24,7 +23,7 @@ fun HomeListSection(
     uiState: HomeUiState,
     homeCallback: HomeCallback,
     onNavigateTo: (String) -> Unit,
-    onEditAsset: (Asset) -> Unit
+    onEditAsset: (SupplierEntity) -> Unit
 ) {
     when {
         uiState.isLoading -> {
@@ -39,7 +38,7 @@ fun HomeListSection(
         }
 
         else -> {
-            if (uiState.assets.isEmpty()) {
+            if (uiState.supplier.isEmpty()) {
                 Box(
                     Modifier.fillMaxSize()
                 ) {
@@ -54,11 +53,11 @@ fun HomeListSection(
                         contentPadding = paddingList,
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        items(uiState.assets.size) { index ->
+                        items(uiState.supplier.size) { index ->
                             HomeItem(
                                 uiState = uiState,
                                 homeCallback = homeCallback,
-                                item = uiState.assets[index],
+                                item = uiState.supplier[index],
                                 onNavigateTo = onNavigateTo,
                                 onEditAsset = onEditAsset
                             )
@@ -75,7 +74,7 @@ fun HomeListSection(
 private fun HomeListSectionPreview() {
     HomeListSection(
         uiState = HomeUiState(
-            assets = DataDummy.getAssets()
+//            supplies = DataDummy.getAssets()
         ),
         homeCallback = HomeCallback(),
         onNavigateTo = {},

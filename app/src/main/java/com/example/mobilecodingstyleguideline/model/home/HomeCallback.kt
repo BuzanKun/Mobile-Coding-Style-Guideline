@@ -1,17 +1,17 @@
 package com.example.mobilecodingstyleguideline.model.home
 
-import com.example.mobilecodingstyleguideline.util.Asset
+import com.example.apiservices.data.model.SupplierEntity
 
 data class HomeCallback(
     val onRefresh: () -> Unit = {},
     val onFilter: (HomeFilterData) -> Unit = {},
     val onSearch: (String) -> Unit = {},
-    val onUpdateItemSelected: (Asset) -> Unit = {},
+    val onUpdateItemSelected: (SupplierEntity) -> Unit = {},
     val onToggleSelectAll: () -> Unit = {},
-    val onDeleteAssets: (List<Asset>) -> Unit = {},
+    val onDeleteSuppliers: (List<String>) -> Unit = {},
     val onResetMessageState: () -> Unit = {},
-    val onUpdateAsset: (Asset) -> Unit = {},
-    val onActivateAssets: (List<Asset>) -> Unit = {},
-    val onInactivateAssets: (List<Asset>) -> Unit = {},
-    val onDownloadAssets: (List<Asset>) -> Unit = {}
+    val onUpdateSupplier: (SupplierEntity) -> Unit = {},
+    val onActivateSuppliers: (List<SupplierEntity>) -> Unit = {},
+    val onInactivateSuppliers: (List<SupplierEntity>) -> Unit = {},
+    val onDownloadAssets: (List<SupplierEntity>) -> Unit = {}
 )

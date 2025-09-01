@@ -47,7 +47,7 @@ fun HomeFilterSheet(
             title = "Active",
             value = tempFilterData.activeSelected,
             isReset = reset,
-            items = uiState.filterOption.activeOption,
+            items = uiState.filterOption.statusOption,
             onChipsSelected = { result ->
                 tempFilterData = tempFilterData.copy(activeSelected = result)
             }
@@ -74,7 +74,7 @@ fun HomeFilterSheet(
             title = "Item Name",
             value = tempFilterData.itemSelected,
             isReset = reset,
-            items = uiState.filterOption.itemOption,
+            items = uiState.filterOption.itemNameOption,
             onChipsSelected = { result ->
                 tempFilterData = tempFilterData.copy(itemSelected = result)
             }
@@ -83,7 +83,7 @@ fun HomeFilterSheet(
             title = "Modified By",
             value = tempFilterData.picSelected,
             isReset = reset,
-            items = uiState.filterOption.picOption,
+            items = uiState.filterOption.modifiedByOption,
             onChipsSelected = { result ->
                 tempFilterData = tempFilterData.copy(picSelected = result)
             }

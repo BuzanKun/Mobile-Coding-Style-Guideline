@@ -12,12 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.apiservices.data.model.SupplierEntity
 import com.example.mobilecodingstyleguideline.model.home.HomeCallback
-import com.example.mobilecodingstyleguideline.ui.screen.createasset.view.CreateAssetDialog
+import com.example.mobilecodingstyleguideline.ui.screen.createsupplier.view.CreateAssetDialog
 import com.example.mobilecodingstyleguideline.ui.screen.home.uistate.HomeUiState
 import com.example.mobilecodingstyleguideline.ui.screen.home.view.listsection.HomeListSection
 import com.example.mobilecodingstyleguideline.ui.screen.home.viewmodel.HomeViewModel
-import com.example.mobilecodingstyleguideline.util.Asset
 import com.tagsamurai.tscomponents.R
 import com.tagsamurai.tscomponents.button.CustomFloatingIconButton
 import com.tagsamurai.tscomponents.handlestate.HandleState
@@ -52,7 +52,7 @@ fun HomeScreen(
     onNavigateTo: (String) -> Unit,
     onShowSnackBar: OnShowSnackBar
 ) {
-    var data: Asset? by remember { mutableStateOf(null) }
+    var data: SupplierEntity? by remember { mutableStateOf(null) }
     var showCreateDialog by remember { mutableStateOf(false) }
 
     // Delete State
@@ -129,9 +129,9 @@ fun HomeScreen(
                 data = null
             },
             showDialog = showCreateDialog,
-            data = data,
+            supplyId = data?.id,
             onShowSnackBar = onShowSnackBar,
-            onSubmit = homeCallback.onUpdateAsset
+            onSubmit = homeCallback.onUpdateSupplier
         )
     }
 }

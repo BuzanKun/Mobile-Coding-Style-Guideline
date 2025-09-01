@@ -18,13 +18,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.apiservices.data.model.SupplierEntity
 import com.example.mobilecodingstyleguideline.model.home.HomeCallback
 import com.example.mobilecodingstyleguideline.navigation.NavigationRoute
 import com.example.mobilecodingstyleguideline.ui.screen.home.component.AssetActionDialog
 import com.example.mobilecodingstyleguideline.ui.screen.home.component.Status
 import com.example.mobilecodingstyleguideline.ui.screen.home.uistate.HomeUiState
 import com.example.mobilecodingstyleguideline.ui.screen.home.view.HomeActionSheet
-import com.example.mobilecodingstyleguideline.util.Asset
 import com.example.mobilecodingstyleguideline.util.DateTime
 import com.tagsamurai.common.model.Severity
 import com.tagsamurai.common.model.TypeChip
@@ -40,10 +40,10 @@ import com.tagsamurai.tscomponents.utils.itemGap4
 @Composable
 fun HomeItem(
     uiState: HomeUiState,
-    item: Asset,
+    item: SupplierEntity,
     homeCallback: HomeCallback,
     onNavigateTo: (String) -> Unit,
-    onEditAsset: (Asset) -> Unit
+    onEditAsset: (SupplierEntity) -> Unit
 ) {
     val isSelected = uiState.itemSelected.contains(item)
     var showActionSheet by remember { mutableStateOf(false) }
@@ -71,11 +71,11 @@ fun HomeItem(
     ) {
         Column {
             ItemState(
-                active = item.active
+                active = item.status
             )
             itemGap4.heightBox()
             Text(
-                text = item.name,
+                text = item.companyName,
                 style = bodyStyle,
                 fontWeight = FontWeight.SemiBold
             )
@@ -86,20 +86,20 @@ fun HomeItem(
             )
             Spacer(Modifier.height(4.dp))
 
-            if (item.orderList.isNotEmpty()) {
+            if (item.item.isNotEmpty()) {
                 LazyRow(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    items(item.orderList.take(chipItemLimit)) { order ->
+                    items(item.item.take(chipItemLimit)) { order ->
                         Chip(
-                            label = order.item.name,
+                            label = order.itemName,
                             type = TypeChip.PILL,
                             severity = Severity.DARK
                         )
                         4.widthBox()
                     }
-                    if (item.orderList.size > chipItemLimit) {
-                        val remainingChipItemCount = item.orderList.size - chipItemLimit
+                    if (item.item.size > chipItemLimit) {
+                        val remainingChipItemCount = item.item.size - chipItemLimit
                         item {
                             Text(
                                 text = "+$remainingChipItemCount more",
@@ -121,7 +121,7 @@ fun HomeItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = DateTime.formatDateTime(item.lastModified).toString(),
+                    text = DateTime.formatDateTime(item.updatedAt),
                     style = bodyStyle
                 )
                 Spacer(Modifier.weight(1f))
@@ -150,11 +150,11 @@ fun HomeItem(
     // Delete Dialog
     AssetActionDialog(
         onDismissRequest = { showDeleteDialog = it },
-        assets = listOf(item),
+        supplies = listOf(item),
         showDialog = showDeleteDialog,
         onDialogConfirm = { value ->
             showActionSheet = false
-            homeCallback.onDeleteAssets(value)
+            homeCallback.onDeleteSuppliers(value.map { it.id })
         },
         status = Status.DELETE
     )
@@ -162,11 +162,11 @@ fun HomeItem(
     // Activate Dialog
     AssetActionDialog(
         onDismissRequest = { state -> showActivateDialog = state },
-        assets = listOf(item),
+        supplies = listOf(item),
         showDialog = showActivateDialog,
         onDialogConfirm = { value ->
             showActionSheet = false
-            homeCallback.onActivateAssets(value)
+            homeCallback.onActivateSuppliers(value)
         },
         status = Status.ACTIVE
     )
@@ -174,11 +174,11 @@ fun HomeItem(
     // Inactivate Dialog
     AssetActionDialog(
         onDismissRequest = { state -> showInactivateDialog = state },
-        assets = listOf(item),
+        supplies = listOf(item),
         showDialog = showInactivateDialog,
         onDialogConfirm = { value ->
             showActionSheet = false
-            homeCallback.onInactivateAssets(value)
+            homeCallback.onInactivateSuppliers(value)
         },
         status = Status.INACTIVE
     )
@@ -199,15 +199,15 @@ fun ItemState(active: Boolean) {
 @Composable
 private fun HomeItemPreview() {
     HomeItem(
-        item = Asset(
+        item = SupplierEntity(
             id = "1",
-            active = true,
-            name = "PT. ABC Indonesia",
+            status = true,
+            companyName = "PT. ABC Indonesia",
             country = "Indonesia",
             state = "DKI Jakarta",
             city = "Jakarta Utara",
             picName = "Nakamoto Y",
-            lastModified = DateTime.getCurrentDateTime()
+            updatedAt = DateTime.formatDateTime(DateTime.getCurrentDateTime())
         ),
         homeCallback = HomeCallback(),
         uiState = HomeUiState(),

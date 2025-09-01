@@ -1,12 +1,13 @@
 package com.example.mobilecodingstyleguideline.util
 
+import com.example.apiservices.data.source.network.model.response.supplier.GetSupplierResponse
 import com.tagsamurai.common.model.OptionData
 
-data class Asset(
+data class Supplier(
     val id: String = "",
-    val active: Boolean = true,
-    val name: String = "",
-    val orderList: List<OrderItem> = emptyList(),
+    val status: Boolean = false,
+    val companyName: String = "",
+    val item: List<GetSupplierResponse.Data.Data.Item> = emptyList(),
     val country: String = "",
     val state: String = "",
     val city: String = "",
@@ -74,190 +75,191 @@ val itemAc = Item(
 )
 
 object DataDummy {
-    fun getAssets(): List<Asset> {
-        return listOf(
-            Asset(
-                id = "1",
-                active = true,
-                name = "PT. ABC Indonesia",
-                country = "Indonesia",
-                state = "DKI Jakarta",
-                city = "Jakarta Utara",
-                location = "Jakarta Utara, Indonesia",
-                orderList = listOf(
-                    OrderItem(
-                        id = 1,
-                        item = itemTv,
-                        orderedSku = listOf(
-                            itemTv.avalaibleSKUs[0],
-                            itemTv.avalaibleSKUs[1]
-                        )
-                    )
-                ),
-                picName = "Nakamoto Y",
-                lastModified = 1724212800L
-            ),
-            Asset(
-                id = "2",
-                active = false,
-                name = "PT. Sinar Mas Dunia",
-                country = "Indonesia",
-                state = "DKI Jakarta",
-                city = "Jakarta Pusat",
-                location = "Jakarta Pusat, Indonesia",
-                orderList = listOf(
-                    OrderItem(
-                        id = 1,
-                        item = itemKulkas,
-                        orderedSku = listOf(
-                            itemKulkas.avalaibleSKUs[0],
-                            itemKulkas.avalaibleSKUs[1]
-                        )
-                    ),
-                    OrderItem(
-                        id = 2,
-                        item = itemAc,
-                        orderedSku = listOf(
-                            itemAc.avalaibleSKUs[0],
-                            itemAc.avalaibleSKUs[1]
-                        )
-                    ),
-                ),
-                picName = "Mark L",
-                lastModified = 1724385600L
-            ),
-            Asset(
-                id = "3",
-                active = true,
-                name = "PT. GHI Indonesia",
-                country = "Indonesia",
-                state = "DKI Jakarta",
-                city = "Jakarta Timur",
-                location = "Jakarta Timur, Indonesia",
-                orderList = listOf(
-                    OrderItem(
-                        id = 1,
-                        item = itemLaptop,
-                        orderedSku = listOf(
-                            itemLaptop.avalaibleSKUs[0],
-                            itemLaptop.avalaibleSKUs[1]
-                        )
-                    ),
-                    OrderItem(
-                        id = 2,
-                        item = itemKulkas,
-                        orderedSku = listOf(
-                            itemKulkas.avalaibleSKUs[0],
-                            itemKulkas.avalaibleSKUs[1]
-                        )
-                    ),
-                    OrderItem(
-                        id = 3,
-                        item = itemAc,
-                        orderedSku = listOf(
-                            itemAc.avalaibleSKUs[0],
-                            itemAc.avalaibleSKUs[1]
-                        )
-                    )
-                ),
-                picName = "Karina Y",
-                lastModified = 1724558400L
-            ),
-            Asset(
-                id = "4",
-                active = false,
-                name = "PT. Ichitan Indonesia",
-                country = "Indonesia",
-                state = "DKI Jakarta",
-                city = "Jakarta Selatan",
-                location = "Jakarta Selatan, Indonesia",
-                orderList = listOf(
-                    OrderItem(
-                        id = 1,
-                        item = itemAc,
-                        orderedSku = listOf(
-                            itemAc.avalaibleSKUs[0],
-                            itemAc.avalaibleSKUs[1]
-                        )
-                    ),
-                    OrderItem(
-                        id = 2,
-                        item = itemKulkas,
-                        orderedSku = listOf(
-                            itemKulkas.avalaibleSKUs[0],
-                            itemKulkas.avalaibleSKUs[1]
-                        )
-                    ),
-                    OrderItem(
-                        id = 3,
-                        item = itemLaptop,
-                        orderedSku = listOf(
-                            itemLaptop.avalaibleSKUs[0],
-                            itemLaptop.avalaibleSKUs[1]
-                        )
-                    ),
-                    OrderItem(
-                        id = 4,
-                        item = itemTv,
-                        orderedSku = listOf(
-                            itemTv.avalaibleSKUs[0],
-                            itemTv.avalaibleSKUs[1]
-                        )
-                    )
-                ),
-                picName = "Hong E",
-                lastModified = 1724731200L
-            ),
-        )
-    }
-
+    //    fun getAssets(): List<Supply> {
+//        return listOf(
+//            Supply(
+//                id = "1",
+//                active = true,
+//                name = "PT. ABC Indonesia",
+//                country = "Indonesia",
+//                state = "DKI Jakarta",
+//                city = "Jakarta Utara",
+//                location = "Jakarta Utara, Indonesia",
+//                orderList = listOf(
+//                    OrderItem(
+//                        id = 1,
+//                        item = itemTv,
+//                        orderedSku = listOf(
+//                            itemTv.avalaibleSKUs[0],
+//                            itemTv.avalaibleSKUs[1]
+//                        )
+//                    )
+//                ),
+//                picName = "Nakamoto Y",
+//                lastModified = 1724212800L
+//            ),
+//            Supply(
+//                id = "2",
+//                active = false,
+//                name = "PT. Sinar Mas Dunia",
+//                country = "Indonesia",
+//                state = "DKI Jakarta",
+//                city = "Jakarta Pusat",
+//                location = "Jakarta Pusat, Indonesia",
+//                orderList = listOf(
+//                    OrderItem(
+//                        id = 1,
+//                        item = itemKulkas,
+//                        orderedSku = listOf(
+//                            itemKulkas.avalaibleSKUs[0],
+//                            itemKulkas.avalaibleSKUs[1]
+//                        )
+//                    ),
+//                    OrderItem(
+//                        id = 2,
+//                        item = itemAc,
+//                        orderedSku = listOf(
+//                            itemAc.avalaibleSKUs[0],
+//                            itemAc.avalaibleSKUs[1]
+//                        )
+//                    ),
+//                ),
+//                picName = "Mark L",
+//                lastModified = 1724385600L
+//            ),
+//            Supply(
+//                id = "3",
+//                active = true,
+//                name = "PT. GHI Indonesia",
+//                country = "Indonesia",
+//                state = "DKI Jakarta",
+//                city = "Jakarta Timur",
+//                location = "Jakarta Timur, Indonesia",
+//                orderList = listOf(
+//                    OrderItem(
+//                        id = 1,
+//                        item = itemLaptop,
+//                        orderedSku = listOf(
+//                            itemLaptop.avalaibleSKUs[0],
+//                            itemLaptop.avalaibleSKUs[1]
+//                        )
+//                    ),
+//                    OrderItem(
+//                        id = 2,
+//                        item = itemKulkas,
+//                        orderedSku = listOf(
+//                            itemKulkas.avalaibleSKUs[0],
+//                            itemKulkas.avalaibleSKUs[1]
+//                        )
+//                    ),
+//                    OrderItem(
+//                        id = 3,
+//                        item = itemAc,
+//                        orderedSku = listOf(
+//                            itemAc.avalaibleSKUs[0],
+//                            itemAc.avalaibleSKUs[1]
+//                        )
+//                    )
+//                ),
+//                picName = "Karina Y",
+//                lastModified = 1724558400L
+//            ),
+//            Supply(
+//                id = "4",
+//                active = false,
+//                name = "PT. Ichitan Indonesia",
+//                country = "Indonesia",
+//                state = "DKI Jakarta",
+//                city = "Jakarta Selatan",
+//                location = "Jakarta Selatan, Indonesia",
+//                orderList = listOf(
+//                    OrderItem(
+//                        id = 1,
+//                        item = itemAc,
+//                        orderedSku = listOf(
+//                            itemAc.avalaibleSKUs[0],
+//                            itemAc.avalaibleSKUs[1]
+//                        )
+//                    ),
+//                    OrderItem(
+//                        id = 2,
+//                        item = itemKulkas,
+//                        orderedSku = listOf(
+//                            itemKulkas.avalaibleSKUs[0],
+//                            itemKulkas.avalaibleSKUs[1]
+//                        )
+//                    ),
+//                    OrderItem(
+//                        id = 3,
+//                        item = itemLaptop,
+//                        orderedSku = listOf(
+//                            itemLaptop.avalaibleSKUs[0],
+//                            itemLaptop.avalaibleSKUs[1]
+//                        )
+//                    ),
+//                    OrderItem(
+//                        id = 4,
+//                        item = itemTv,
+//                        orderedSku = listOf(
+//                            itemTv.avalaibleSKUs[0],
+//                            itemTv.avalaibleSKUs[1]
+//                        )
+//                    )
+//                ),
+//                picName = "Hong E",
+//                lastModified = 1724731200L
+//            ),
+//        )
+//    }
+//
     fun getItemMasterList(): List<Item> {
         val itemMasterList = listOf(itemKulkas, itemTv, itemAc, itemLaptop)
         return itemMasterList
     }
 
+    //
     fun generateOptionsDataString(list: List<String>): List<OptionData<String>> {
         return list.map { OptionData(it, it) }
     }
-
-    fun getActive(): List<OptionData<Boolean>> {
-        return listOf(
-            OptionData("Active", true),
-            OptionData("Inactive", false)
-        )
-    }
-
-    fun getSupplier(): List<String> {
-        return getAssets().map { it.name }.distinct()
-    }
-
-    fun getCountry(): List<String> {
-        return getAssets().map { it.country }.distinct()
-    }
-
-    fun getState(): List<String> {
-        return getAssets().map { it.state }.distinct()
-    }
-
-    fun getCity(): List<String> {
-        return getAssets().map { it.city }.distinct()
-    }
-
-    fun getItemName(): List<String> {
-        return getAssets().flatMap { asset -> asset.orderList.map { orderItem -> orderItem.item.name } }
-            .distinct()
-    }
-
-    fun getItemSku(): List<String> {
-        return getAssets()
-            .flatMap { it.orderList }
-            .flatMap { it.orderedSku }
-            .map { it.id }
-            .distinct()
-    }
-
-    fun getModifiedBy(): List<String> {
-        return getAssets().map { it.picName }.distinct()
-    }
+//
+//    fun getActive(): List<OptionData<Boolean>> {
+//        return listOf(
+//            OptionData("Active", true),
+//            OptionData("Inactive", false)
+//        )
+//    }
+//
+//    fun getSupplier(): List<String> {
+//        return getAssets().map { it.name }.distinct()
+//    }
+//
+//    fun getCountry(): List<String> {
+//        return getAssets().map { it.country }.distinct()
+//    }
+//
+//    fun getState(): List<String> {
+//        return getAssets().map { it.state }.distinct()
+//    }
+//
+//    fun getCity(): List<String> {
+//        return getAssets().map { it.city }.distinct()
+//    }
+//
+//    fun getItemName(): List<String> {
+//        return getAssets().flatMap { asset -> asset.orderList.map { orderItem -> orderItem.item.name } }
+//            .distinct()
+//    }
+//
+//    fun getItemSku(): List<String> {
+//        return getAssets()
+//            .flatMap { it.orderList }
+//            .flatMap { it.orderedSku }
+//            .map { it.id }
+//            .distinct()
+//    }
+//
+//    fun getModifiedBy(): List<String> {
+//        return getAssets().map { it.picName }.distinct()
+//    }
 
 }

@@ -9,8 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.apiservices.data.model.SupplierEntity
 import com.example.mobilecodingstyleguideline.ui.screen.home.uistate.HomeUiState
-import com.example.mobilecodingstyleguideline.util.Asset
 import com.tagsamurai.tscomponents.R
 import com.tagsamurai.tscomponents.bottomsheet.BottomSheet
 import com.tagsamurai.tscomponents.button.ActionButton
@@ -25,7 +25,7 @@ fun HomeActionSheet(
     onDismissRequest: (Boolean) -> Unit,
     showSheet: Boolean,
     uiState: HomeUiState,
-    item: Asset? = null,
+    item: SupplierEntity? = null,
     onDetail: (() -> Unit)? = null,
     onEdit: (() -> Unit)? = null,
     onDelete: () -> Unit,
@@ -42,16 +42,16 @@ fun HomeActionSheet(
                     Modifier.padding(horizontal = 32.dp)
                 ) {
                     Text(
-                        text = item.name,
+                        text = item.companyName,
                         style = headerStyle,
                         fontWeight = FontWeight.SemiBold,
                         color = theme.popupTitle
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Switch(
-                        checked = item.active,
+                        checked = item.status,
                         onCheckedChange = {
-                            if (item.active) onInactivate?.invoke() else onActivate?.invoke()
+                            if (item.status) onInactivate?.invoke() else onActivate?.invoke()
                         }
                     )
                 }

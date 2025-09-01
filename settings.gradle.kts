@@ -13,6 +13,9 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
 
 dependencyResolutionManagement {
 
@@ -32,7 +35,6 @@ dependencyResolutionManagement {
             credentials{
                 username="bytesafe"
                 password=bytesafetoken
-
             }
         }
     }
@@ -40,5 +42,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Coding Style Guideline"
 include(":app")
+include(":apiservices")
 includeBuild("../ts-component")
  

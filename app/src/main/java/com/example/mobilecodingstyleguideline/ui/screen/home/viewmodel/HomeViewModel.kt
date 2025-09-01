@@ -2,98 +2,167 @@ package com.example.mobilecodingstyleguideline.ui.screen.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.apiservices.base.Result
+import com.example.apiservices.data.model.SupplierEntity
+import com.example.apiservices.data.source.network.model.request.supplier.DeleteSupplierBody
+import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierOptionQueryParams
+import com.example.apiservices.data.source.network.model.request.supplier.GetSupplierQueryParams
+import com.example.apiservices.domain.supplier.DeleteSupplierUseCase
+import com.example.apiservices.domain.supplier.GetSupplierOptionUseCase
+import com.example.apiservices.domain.supplier.GetSuppliersUseCase
 import com.example.mobilecodingstyleguideline.model.home.HomeCallback
 import com.example.mobilecodingstyleguideline.model.home.HomeFilterData
 import com.example.mobilecodingstyleguideline.model.home.HomeFilterOption
 import com.example.mobilecodingstyleguideline.ui.screen.home.uistate.HomeUiState
-import com.example.mobilecodingstyleguideline.util.Asset
-import com.example.mobilecodingstyleguideline.util.DataDummy
+import com.example.mobilecodingstyleguideline.util.Util
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : ViewModel() {
+class HomeViewModel @Inject constructor(
+    private val getSuppliersUseCase: GetSuppliersUseCase,
+    private val getSupplierOptionUseCase: GetSupplierOptionUseCase,
+    private val deleteSupplierUseCase: DeleteSupplierUseCase
+) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
 
     fun init() {
-        initAssets()
+        initSupplier()
         getFilterOption()
-    }
-
-    private fun getFilterOption() {
-        _uiState.value = _uiState.value.copy(
-            filterOption = HomeFilterOption(
-                activeOption = DataDummy.getActive(),
-                supplierOption = DataDummy.generateOptionsDataString(DataDummy.getSupplier()),
-                cityOption = DataDummy.generateOptionsDataString(DataDummy.getCity()),
-                itemOption = DataDummy.generateOptionsDataString(DataDummy.getItemName()),
-                picOption = DataDummy.generateOptionsDataString(DataDummy.getModifiedBy())
-            )
-        )
     }
 
     fun getCallback(): HomeCallback {
         return HomeCallback(
-            onRefresh = { initAssets(isRefresh = true) },
+            onRefresh = { initSupplier(isRefresh = true) },
             onFilter = ::updateFilter,
             onSearch = ::search,
             onUpdateItemSelected = ::updateItemSelected,
             onToggleSelectAll = ::toggleSelectAll,
-            onDeleteAssets = ::deleteAssets,
+            onDeleteSuppliers = ::deleteSuppliers,
             onResetMessageState = ::resetMessageState,
-            onActivateAssets = ::activateAssets,
-            onInactivateAssets = ::inactivateAssets,
-            onUpdateAsset = ::onUpdateAsset
+            onActivateSuppliers = ::activateAssets,
+            onInactivateSuppliers = ::inactivateAssets,
+            onUpdateSupplier = ::onUpdateAsset
         )
     }
 
-    private fun initAssets(isRefresh: Boolean = false) {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
-            delay(1000)
+    fun initSupplier(isRefresh: Boolean = false) {
+        _uiState.value = _uiState.value.copy(isLoading = true)
 
-            if (isRefresh) {
-                _uiState.value = _uiState.value.copy(
-                    searchQuery = "",
-                    filterData = HomeFilterData(),
-                )
-            }
-
-            val assets = DataDummy.getAssets()
+        if (isRefresh) {
             _uiState.value = _uiState.value.copy(
-                isLoading = false,
-                assetDefault = assets,
-                assets = assets
+                searchQuery = "",
+                filterData = HomeFilterData(),
             )
         }
+
+        getSuppliersUseCase(GetSupplierQueryParams()).onEach { result ->
+            when (result) {
+                is Result.Success -> {
+                    val data = result.data.map { item ->
+                        SupplierEntity(
+                            id = item.id,
+                            status = item.status,
+                            companyName = item.companyName,
+                            item = item.item,
+                            country = item.country,
+                            state = item.state,
+                            city = item.city,
+                            zipCode = item.zipCode,
+                            companyLocation = item.companyLocation,
+                            companyPhoneNumber = item.companyPhoneNumber,
+                            picName = item.picName,
+                            picPhoneNumber = item.picPhoneNumber,
+                            picEmail = item.picEmail,
+                            updatedAt = item.updatedAt,
+                            createdAt = item.createdAt
+                        )
+                    }
+
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        supplyDefault = data,
+                        supplier = data
+                    )
+                }
+
+                is Result.Error -> {
+                    _uiState.value = _uiState.value.copy(isLoading = false)
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
-    private fun search(query: String) {
+    fun getFilterOption() {
+        _uiState.value = _uiState.value.copy(isLoadingGroup = true)
+
+        val optionQueryParams = GetSupplierOptionQueryParams(
+            supplierOption = true,
+            cityOption = true,
+            itemNameOption = true,
+            modifiedByOption = true
+        )
+
+        getSupplierOptionUseCase(optionQueryParams).onEach { result ->
+            when (result) {
+                is Result.Success -> {
+                    val data = result.data
+
+                    _uiState.value = _uiState.value.copy(
+                        filterOption = HomeFilterOption(
+                            statusOption = Util.getStatusOption(),
+                            supplierOption = Util.convertOptionsData(data.supplierOption),
+                            cityOption = Util.convertOptionsData(data.cityOption),
+                            itemNameOption = Util.convertOptionsData(data.itemNameOption),
+                            modifiedByOption = Util.convertOptionsData(data.modifiedByOption)
+                        ),
+                        isLoadingGroup = false
+                    )
+                }
+
+                is Result.Error -> {
+                    _uiState.value = _uiState.value.copy(
+                        filterOption = HomeFilterOption(),
+                        isLoadingGroup = false
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun search(query: String) {
         val query = query.trim()
         _uiState.value = _uiState.value.copy(searchQuery = query)
 
-        val itemsFilter = _uiState.value.assetDefault
+        val itemsFilter = _uiState.value.supplier
         val items = if (query.isBlank()) {
             itemsFilter
         } else {
             itemsFilter.filter { item ->
                 val queryMatch = listOf(
-                    item.name,
+                    item.companyName,
+                    item.state,
                     item.city,
+                    item.country,
                     item.picName
                 ).any {
                     it.contains(query, ignoreCase = true)
                 }
 
-                val itemQueryMatch = item.orderList.any { orderItem ->
-                    orderItem.item.name.contains(query, ignoreCase = true)
+                val itemQueryMatch = item.item.any { orderItem ->
+                    orderItem.itemName.contains(query, ignoreCase = true)
                 }
 
                 queryMatch || itemQueryMatch
@@ -102,25 +171,25 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         updateAssets(items)
     }
 
-    private fun updateAssets(assets: List<Asset>) {
+    private fun updateAssets(supplies: List<SupplierEntity>) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             delay(1000)
 
             _uiState.value = _uiState.value.copy(
                 isLoading = false,
-                assets = assets
+                supplier = supplies
             )
         }
     }
 
-    private fun updateItemSelected(asset: Asset) {
+    private fun updateItemSelected(supply: SupplierEntity) {
         val selectedItems = _uiState.value.itemSelected.toMutableList()
         _uiState.value = _uiState.value.copy(
-            itemSelected = if (selectedItems.contains(asset)) {
-                selectedItems.apply { remove(asset) }
+            itemSelected = if (selectedItems.contains(supply)) {
+                selectedItems.apply { remove(supply) }
             } else {
-                selectedItems.apply { add(asset) }
+                selectedItems.apply { add(supply) }
             }
         )
     }
@@ -131,7 +200,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                 itemSelected = if (it.isAllSelected) {
                     emptyList()
                 } else {
-                    it.assets
+                    it.supplier
                 },
                 isAllSelected = !it.isAllSelected
             )
@@ -141,55 +210,71 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     private fun updateFilter(data: HomeFilterData) {
         _uiState.value = _uiState.value.copy(filterData = data)
 
-        val itemsFilter = _uiState.value.assetDefault
+        val itemsFilter = _uiState.value.supplier
         val items = itemsFilter.filter { item ->
             val isDateInRange = if (data.dateSelected.isEmpty()) {
                 true
             } else {
-                val startDate = (data.dateSelected.getOrNull(0))?.div(1000)
-                val endDate = (data.dateSelected.getOrNull(1))?.div(1000)?.plus(86399)
-                val itemDate = item.lastModified
+                val startMillis = data.dateSelected.getOrNull(0)
+                val endMillis = data.dateSelected.getOrNull(1)?.plus(86399999L)
 
-                if (startDate != null && endDate != null) {
-                    itemDate >= startDate && itemDate <= endDate
+                val startDate = startMillis?.let {
+                    ZonedDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
+                }
+                val endDate = endMillis?.let {
+                    ZonedDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
+                }
+
+                val itemDate = ZonedDateTime.parse(item.updatedAt)
+
+                if (startDate != null && endDate != null && itemDate != null) {
+                    !itemDate.isBefore(startDate) && !itemDate.isAfter(endDate)
                 } else {
                     true
                 }
             }
 
-            (data.activeSelected.isEmpty() || data.activeSelected.contains(item.active)) &&
-                    (data.supplierSelected.isEmpty() || data.supplierSelected.contains(item.name)) &&
+
+            (data.activeSelected.isEmpty() || data.activeSelected.contains(item.status)) &&
+                    (data.supplierSelected.isEmpty() || data.supplierSelected.contains(item.companyName)) &&
                     (data.citySelected.isEmpty() || data.citySelected.contains(item.city)) &&
                     (data.picSelected.isEmpty() || data.picSelected.contains(item.picName)) &&
-                    (data.itemSelected.isEmpty() || item.orderList.any { orderItem ->
-                        data.itemSelected.contains(orderItem.item.name)
-                    }) && isDateInRange
+                    (data.itemSelected.isEmpty() || item.item.any { orderItem ->
+                        data.itemSelected.contains(orderItem.itemName)
+                    })
+                    && isDateInRange
         }
         updateAssets(items)
     }
 
-    private fun deleteAssets(items: List<Asset>) {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoadingOverlay = true)
-            delay(500)
+    private fun deleteSuppliers(itemIds: List<String>) {
+        _uiState.value = _uiState.value.copy(isLoadingOverlay = true)
 
-            val isRand = (0..1).random() == 1
-            if (isRand) {
-                _uiState.update { currData ->
-                    updateAssets(currData.assets.filterNot { items.contains(it) })
-                    currData.copy(
+        val body = DeleteSupplierBody(
+            supplierID = itemIds
+        )
+
+        deleteSupplierUseCase(body).onEach { result ->
+            when (result) {
+                is Result.Success -> {
+                    _uiState.update { currData ->
+                        currData.copy(
+                            isLoadingOverlay = false,
+                            itemSelected = emptyList(),
+                            deleteState = true
+                        )
+                    }
+                    initSupplier()
+                }
+
+                is Result.Error -> {
+                    _uiState.value = _uiState.value.copy(
                         isLoadingOverlay = false,
-                        itemSelected = emptyList(),
-                        deleteState = true
+                        deleteState = false
                     )
                 }
-            } else {
-                _uiState.value = _uiState.value.copy(
-                    isLoadingOverlay = false,
-                    deleteState = false
-                )
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     private fun resetMessageState() {
@@ -200,11 +285,11 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         )
     }
 
-    private fun onUpdateAsset(data: Asset) {
+    private fun onUpdateAsset(data: SupplierEntity) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
-            val assets = _uiState.value.assets.toMutableList()
+            val assets = _uiState.value.supplier.toMutableList()
 
             if (data.id.isBlank()) {
                 val newId = UUID.randomUUID().toString()
@@ -218,22 +303,22 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             delay(1000)
             _uiState.value = _uiState.value.copy(
                 isLoading = false,
-                assets = assets,
-                assetDefault = assets
+                supplier = assets,
+                supplyDefault = assets
             )
         }
     }
 
-    private fun activateAssets(items: List<Asset>) {
+    private fun activateAssets(items: List<SupplierEntity>) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoadingOverlay = true)
 
             val itemsToUpdate = items.map { it.id }.toSet()
 
-            val updatedAssets = _uiState.value.assets.map { asset ->
+            val updatedAssets = _uiState.value.supplier.map { asset ->
                 if (itemsToUpdate.contains(asset.id)) {
                     asset.copy(
-                        active = true
+                        status = true
                     )
                 } else {
                     asset
@@ -243,8 +328,8 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             _uiState.update {
                 it.copy(
                     isLoadingOverlay = false,
-                    assets = updatedAssets,
-                    assetDefault = updatedAssets,
+                    supplier = updatedAssets,
+                    supplyDefault = updatedAssets,
                     itemSelected = emptyList(),
                     activateState = true
                 )
@@ -252,16 +337,16 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    private fun inactivateAssets(items: List<Asset>) {
+    private fun inactivateAssets(items: List<SupplierEntity>) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoadingOverlay = true)
 
             val itemsToUpdate = items.map { it.id }.toSet()
 
-            val updatedAssets = _uiState.value.assets.map { asset ->
+            val updatedAssets = _uiState.value.supplier.map { asset ->
                 if (itemsToUpdate.contains(asset.id)) {
                     asset.copy(
-                        active = false
+                        status = false
                     )
                 } else {
                     asset
@@ -271,8 +356,8 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             _uiState.update {
                 it.copy(
                     isLoadingOverlay = false,
-                    assets = updatedAssets,
-                    assetDefault = updatedAssets,
+                    supplier = updatedAssets,
+                    supplyDefault = updatedAssets,
                     itemSelected = emptyList(),
                     inactivateState = true
                 )

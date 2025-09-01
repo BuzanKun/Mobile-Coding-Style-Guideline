@@ -72,11 +72,11 @@ fun HomeTopAppBar(
     // Delete Dialog
     AssetActionDialog(
         onDismissRequest = { state -> showDeleteDialog = state },
-        assets = uiState.itemSelected,
+        supplies = uiState.itemSelected,
         showDialog = showDeleteDialog,
         onDialogConfirm = { value ->
             showActionSheet = false
-            homeCallback.onDeleteAssets(value)
+            homeCallback.onDeleteSuppliers(value.map { it.id })
         },
         status = Status.DELETE
     )
@@ -84,7 +84,7 @@ fun HomeTopAppBar(
     // Download Dialog
     AssetActionDialog(
         onDismissRequest = { state -> showDownloadDialog = state },
-        assets = uiState.assets,
+        supplies = uiState.supplier,
         showDialog = showDownloadDialog,
         onDialogConfirm = { value ->
             homeCallback.onDownloadAssets(value)
@@ -95,11 +95,11 @@ fun HomeTopAppBar(
     // Activate Dialog
     AssetActionDialog(
         onDismissRequest = { state -> showActivateDialog = state },
-        assets = uiState.itemSelected,
+        supplies = uiState.itemSelected,
         showDialog = showActivateDialog,
         onDialogConfirm = { value ->
             showActionSheet = false
-            homeCallback.onActivateAssets(value)
+            homeCallback.onActivateSuppliers(value)
         },
         status = Status.ACTIVE
     )
@@ -107,11 +107,11 @@ fun HomeTopAppBar(
     // Inactivate Dialog
     AssetActionDialog(
         onDismissRequest = { state -> showInactivateDialog = state },
-        assets = uiState.itemSelected,
+        supplies = uiState.itemSelected,
         showDialog = showInactivateDialog,
         onDialogConfirm = { value ->
             showActionSheet = false
-            homeCallback.onInactivateAssets(value)
+            homeCallback.onInactivateSuppliers(value)
         },
         status = Status.INACTIVE
     )
