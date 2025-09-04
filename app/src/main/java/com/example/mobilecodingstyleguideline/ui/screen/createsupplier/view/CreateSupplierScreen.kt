@@ -23,7 +23,7 @@ import com.tagsamurai.tscomponents.utils.Spacer.heightBox
 import com.tagsamurai.tscomponents.utils.bodyStyle
 
 @Composable
-fun CreateAssetScreen(
+fun CreateSupplierScreen(
     uiState: CreateSupplierUiState,
     callback: CreateSupplierCallback,
     onNavigateUp: () -> Unit,
@@ -75,7 +75,7 @@ fun CreateAssetScreen(
     ) {
         Column {
             Box(Modifier.weight(1f)) {
-                CreateAssetForm(
+                CreateSupplierForm(
                     uiState = uiState,
                     onUpdateForm = callback.onUpdateFormData
                 )

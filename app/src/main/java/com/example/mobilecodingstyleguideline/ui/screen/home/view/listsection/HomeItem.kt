@@ -165,7 +165,7 @@ fun HomeItem(
         onDialogConfirm = { value ->
             showActionSheet = false
             val newStatus = !item.status
-            homeCallback.onEditStatusSupplier(value, newStatus)
+            homeCallback.onEditStatusSupplier(value.map { it.id }, newStatus)
         },
         status = if (item.status) Status.INACTIVE else Status.ACTIVE
     )

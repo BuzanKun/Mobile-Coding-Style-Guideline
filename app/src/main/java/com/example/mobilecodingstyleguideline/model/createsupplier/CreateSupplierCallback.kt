@@ -5,5 +5,7 @@ data class CreateSupplierCallback(
     val onResetMessageState: () -> Unit = {},
     val onUpdateFormData: (CreateSupplierFormData) -> Unit = {},
     val onSubmitForm: () -> Unit = {},
-    val onUpdateStayOnForm: () -> Unit = {}
+    val onUpdateStayOnForm: () -> Unit = {},
+    val onAddSupplierItem: () -> Unit = {},
+    val onRemoveSupplierItem: (CreateSupplierFormData.Item) -> Unit = {}
 )

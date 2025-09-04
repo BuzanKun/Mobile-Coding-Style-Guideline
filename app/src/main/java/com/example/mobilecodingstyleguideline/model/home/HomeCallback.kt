@@ -12,6 +12,6 @@ data class HomeCallback(
     val onDeleteSuppliers: (List<String>) -> Unit = {},
     val onResetMessageState: () -> Unit = {},
     val onUpdateSupplier: (SupplierEntity) -> Unit = {},
-    val onEditStatusSupplier: (List<SupplierEntity>, Boolean) -> Unit = { _, _ -> },
+    val onEditStatusSupplier: (List<String>, Boolean) -> Unit = { _, _ -> },
     val onDownloadAssets: (List<SupplierEntity>) -> Unit = {}
 )

@@ -105,7 +105,6 @@ class HomeViewModel @Inject constructor(
 
                     _uiState.value = _uiState.value.copy(
                         filterOption = HomeFilterOption(
-                            statusOption = Util.getStatusOption(),
                             supplierOption = Util.convertOptionsData(data.supplierOption),
                             cityOption = Util.convertOptionsData(data.cityOption),
                             itemNameOption = Util.convertOptionsData(data.itemNameOption),
@@ -230,9 +229,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun editStatusSupplier(supplier: List<SupplierEntity>, newStatus: Boolean) {
+    private fun editStatusSupplier(supplierId: List<String>, newStatus: Boolean) {
         _uiState.value = _uiState.value.copy(isLoadingOverlay = true)
-        val supplierId = supplier.map { it.id }
+
         val body = PatchEditStatusSupplierBody(supplierId, newStatus)
         editStatusSupplierBody.invoke(body).onEach { result ->
             when (result) {
@@ -251,7 +250,6 @@ class HomeViewModel @Inject constructor(
                             }
                         )
                     }
-                    init()
                 }
 
                 is Result.Error -> {

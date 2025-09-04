@@ -101,7 +101,7 @@ fun HomeTopAppBar(
         showDialog = showStatusChangeDialog,
         onDialogConfirm = { value ->
             showActionSheet = false
-            homeCallback.onEditStatusSupplier(value, newStatusToApply)
+            homeCallback.onEditStatusSupplier(value.map { it.id }, newStatusToApply)
         },
         status = if (newStatusToApply) Status.INACTIVE else Status.ACTIVE
     )

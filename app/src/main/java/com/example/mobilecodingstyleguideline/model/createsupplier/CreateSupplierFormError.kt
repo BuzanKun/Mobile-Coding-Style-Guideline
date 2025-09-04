@@ -1,7 +1,7 @@
 package com.example.mobilecodingstyleguideline.model.createsupplier
 
 data class CreateSupplierFormError(
-    val name: String? = null,
+    val companyName: String? = null,
     val itemName: List<String?> = emptyList(),
     val itemSku: List<String?> = emptyList(),
     val zipCode: String? = null,
@@ -14,7 +14,7 @@ data class CreateSupplierFormError(
     val picEmail: String? = null
 ) {
     fun hasError(): Boolean {
-        return name != null ||
+        return companyName != null ||
                 itemName.any { it != null } ||
                 itemSku.any { it != null } ||
                 zipCode != null ||

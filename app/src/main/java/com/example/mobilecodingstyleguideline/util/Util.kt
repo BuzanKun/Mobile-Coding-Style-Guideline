@@ -11,11 +11,4 @@ object Util {
     fun convertOptionsData(list: List<SupplierOptionEntity.OptionData>): List<OptionData<String>> {
         return list.map { OptionData(label = it.label, value = it.value) }
     }
-
-    fun getStatusOption(): List<OptionData<Boolean>> {
-        return listOf(
-            OptionData("Active", true),
-            OptionData("Inactive", false)
-        )
-    }
 }

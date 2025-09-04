@@ -23,7 +23,7 @@ import com.tagsamurai.tscomponents.snackbar.Snackbar
 import com.tagsamurai.tscomponents.snackbar.showSnackbar
 
 @Composable
-fun CreateAssetDialog(
+fun CreateSupplierDialog(
     onDismissRequest: (Boolean) -> Unit,
     showDialog: Boolean,
     supplyId: String? = null,
@@ -36,11 +36,11 @@ fun CreateAssetDialog(
 
     LaunchedEffect(showDialog) {
         if (showDialog) {
-            viewModel.init(supplyId = supplyId)
+            viewModel.init(supplierId = supplyId)
         }
     }
 
-    CreateAssetDialog(
+    CreateSupplierDialog(
         showDialog = showDialog,
         uiState = uiState,
         callback = callback,
@@ -51,7 +51,7 @@ fun CreateAssetDialog(
 }
 
 @Composable
-private fun CreateAssetDialog(
+private fun CreateSupplierDialog(
     showDialog: Boolean,
     uiState: CreateSupplierUiState,
     callback: CreateSupplierCallback,
@@ -78,7 +78,7 @@ private fun CreateAssetDialog(
         ) {
             (LocalView.current.parent as DialogWindowProvider).window.setDimAmount(0f)
             Box {
-                CreateAssetScreen(
+                CreateSupplierScreen(
                     uiState = uiState,
                     callback = callback,
                     onNavigateUp = onNavigateUp,

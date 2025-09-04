@@ -14,7 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.apiservices.data.model.SupplierEntity
 import com.example.mobilecodingstyleguideline.model.home.HomeCallback
-import com.example.mobilecodingstyleguideline.ui.screen.createsupplier.view.CreateAssetDialog
+import com.example.mobilecodingstyleguideline.ui.screen.createsupplier.view.CreateSupplierDialog
 import com.example.mobilecodingstyleguideline.ui.screen.home.uistate.HomeUiState
 import com.example.mobilecodingstyleguideline.ui.screen.home.view.listsection.HomeListSection
 import com.example.mobilecodingstyleguideline.ui.screen.home.viewmodel.HomeViewModel
@@ -127,7 +127,7 @@ fun HomeScreen(
             )
         }
 
-        CreateAssetDialog(
+        CreateSupplierDialog(
             onDismissRequest = { state ->
                 showCreateDialog = state
                 data = null
