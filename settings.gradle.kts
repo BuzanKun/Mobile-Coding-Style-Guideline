@@ -1,5 +1,7 @@
 import java.util.Properties
 
+include(":shared")
+
 pluginManagement {
     repositories {
         google {
@@ -41,7 +43,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Coding Style Guideline"
-include(":app")
-include(":apiservices")
+include(":composeApp")
 includeBuild("../ts-component")
  

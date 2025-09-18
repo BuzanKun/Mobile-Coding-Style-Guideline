@@ -1,38 +1,76 @@
+## ------------------
+##  Build Artifacts
+## ------------------
+# Ignore all build directories in any module (Gradle, KMP, Native)
+**/build/
+.kotlin/
+
 # Gradle files
 .gradle/
 build/
 
-# Local configuration file (sdk path, etc)
-local.properties
-env.properties
+# Kotlin/Native compiler cache
+.konan/
 
-# Log/OS Files
-*.log
+# Kotlin/Native library format
+**/klib/
 
-# Android Studio generated files and folders
-captures/
+# Android build outputs
+*.apk
+*.aab
+output-metadata.json
 .externalNativeBuild/
 .cxx/
-*.aab
-*.apk
-output-metadata.json
 
-# IntelliJ
-*.iml
-.idea/
-misc.xml
-deploymentTargetDropDown.xml
-render.experimental.xml
+# Apple build outputs and artifacts
+DerivedData/
+*.xcframework
+
+## ------------------
+##  Local Configuration
+## ------------------
+# SDK paths, API keys, etc.
+local.properties
+env.properties
 
 # Keystore files
 *.jks
 *.keystore
 
+## ------------------
+##  IDE & Editor Files
+## ------------------
+# IntelliJ / Android Studio
+.idea/
+*.iml
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+
+# Xcode user-specific files
+*.xcodeproj/project.xcworkspace/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/contents.xcworkspacedata
+*.xcworkspace/xcuserdata/
+
 # Google Services (e.g. APIs or Firebase)
 google-services.json
 
-# Android Profiling
-*.hprof
-
-# Miscellaneous
+## ------------------
+##  Logs & System Files
+## ------------------
+# OS-generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Log files
+*.log
+
+# Android profiling
+*.hprof
+captures/
