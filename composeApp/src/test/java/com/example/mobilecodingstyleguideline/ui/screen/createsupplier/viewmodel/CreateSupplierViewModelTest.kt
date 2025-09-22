@@ -196,7 +196,7 @@ class CreateSupplierViewModelTest {
                 item = listOf(
                     SupplierEntity.Item(
                         itemName = "itemName",
-                        itemSku = listOf("sku")
+                        sku = listOf("sku")
                     )
                 ),
                 country = "country",
@@ -296,7 +296,7 @@ class CreateSupplierViewModelTest {
                     item = listOf(
                         SupplierEntity.Item(
                             itemName = "itemName",
-                            itemSku = listOf("sku")
+                            sku = listOf("sku")
                         )
                     ),
                     country = "country",

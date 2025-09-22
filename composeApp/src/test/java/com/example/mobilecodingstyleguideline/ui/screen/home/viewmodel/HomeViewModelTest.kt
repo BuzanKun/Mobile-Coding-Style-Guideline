@@ -467,7 +467,7 @@ class HomeViewModelTest {
                             id = "itemId",
                             supplierId = "supplierId",
                             itemName = "itemName",
-                            itemSku = listOf("sku")
+                            sku = listOf("sku")
                         )
                     ),
                     country = "country",
@@ -520,7 +520,7 @@ class HomeViewModelTest {
                             id = "itemId",
                             supplierId = "supplierId",
                             itemName = "itemName",
-                            itemSku = listOf("sku")
+                            sku = listOf("sku")
                         )
                     ),
                     country = "country",
@@ -575,7 +575,7 @@ class HomeViewModelTest {
                         id = "itemId",
                         supplierId = "supplierId",
                         itemName = "itemName",
-                        itemSku = listOf("sku")
+                        sku = listOf("sku")
                     )
                 ),
                 country = "country",
@@ -625,7 +625,7 @@ class HomeViewModelTest {
                         id = "itemId",
                         supplierId = "supplierId",
                         itemName = "itemName",
-                        itemSku = listOf("sku")
+                        sku = listOf("sku")
                     )
                 ),
                 country = "country",

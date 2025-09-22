@@ -101,7 +101,7 @@ object DataDummy {
     fun getItemSku(): List<String> {
         return getAssets()
             .flatMap { it.item }
-            .flatMap { it.itemSku }
+            .flatMap { it.sku }
             .distinct()
     }
 

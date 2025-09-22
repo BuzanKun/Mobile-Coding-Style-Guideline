@@ -16,8 +16,7 @@ kotlin {
 
         withJava()
 
-        withHostTestBuilder {
-        }
+        withHostTestBuilder {}
 
         withDeviceTestBuilder {
             sourceSetTreeName = "test"
@@ -85,6 +84,9 @@ kotlin {
         // Shared Module Test Dependencies
         commonTest {
             dependencies {
+                // Shared Test Module
+                implementation(project(":shared-test"))
+
                 // Base Kotlin Test
                 implementation(libs.kotlin.test)
                 implementation(libs.kotlinx.coroutines.test)

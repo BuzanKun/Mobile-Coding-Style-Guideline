@@ -25,6 +25,6 @@ data class SupplierEntity(
         val id: String = "",
         val supplierId: String = "",
         val itemName: String = "",
-        val itemSku: List<String> = emptyList()
+        val sku: List<String> = emptyList()
     )
 }

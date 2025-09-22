@@ -19,10 +19,10 @@ import io.ktor.http.contentType
 
 class SupplierKtorService(
     private val httpClient: HttpClient
-) {
+) : SupplierApiService {
     private val supplierPath = "supplier"
 
-    suspend fun getSuppliers(token: String, query: Map<String, String?> = mapOf()): HttpResponse {
+    override suspend fun getSuppliers(token: String, query: Map<String, String?>): HttpResponse {
         return httpClient.get(supplierPath) {
             header("Authorization", token)
             contentType(ContentType.Application.Json)
@@ -32,16 +32,16 @@ class SupplierKtorService(
         }
     }
 
-    suspend fun getSupplierById(token: String, id: String): HttpResponse {
+    override suspend fun getSupplierById(token: String, id: String): HttpResponse {
         return httpClient.get("$supplierPath/$id") {
             header("Authorization", token)
             contentType(ContentType.Application.Json)
         }
     }
 
-    suspend fun getSupplierOption(
+    override suspend fun getSupplierOption(
         token: String,
-        query: Map<String, Boolean?> = mapOf()
+        query: Map<String, Boolean?>
     ): HttpResponse {
         return httpClient.get("$supplierPath/option") {
             header("Authorization", token)
@@ -52,7 +52,10 @@ class SupplierKtorService(
         }
     }
 
-    suspend fun createSupplier(token: String, body: CreateUpdateSupplierBody): HttpResponse {
+    override suspend fun createSupplier(
+        token: String,
+        body: CreateUpdateSupplierBody
+    ): HttpResponse {
         return httpClient.post(supplierPath) {
             header("Authorization", token)
             contentType(ContentType.Application.Json)
@@ -60,7 +63,7 @@ class SupplierKtorService(
         }
     }
 
-    suspend fun deleteSupplier(token: String, body: DeleteSupplierBody): HttpResponse {
+    override suspend fun deleteSupplier(token: String, body: DeleteSupplierBody): HttpResponse {
         return httpClient.request(supplierPath) {
             method = HttpMethod.Delete
             header("Authorization", token)
@@ -69,7 +72,7 @@ class SupplierKtorService(
         }
     }
 
-    suspend fun editSupplier(
+    override suspend fun editSupplier(
         token: String,
         id: String,
         body: CreateUpdateSupplierBody
@@ -81,7 +84,10 @@ class SupplierKtorService(
         }
     }
 
-    suspend fun editStatusSupplier(token: String, body: PatchEditStatusSupplierBody): HttpResponse {
+    override suspend fun editStatusSupplier(
+        token: String,
+        body: PatchEditStatusSupplierBody
+    ): HttpResponse {
         return httpClient.patch(supplierPath) { // Adjust path if needed
             header("Authorization", token)
             contentType(ContentType.Application.Json)

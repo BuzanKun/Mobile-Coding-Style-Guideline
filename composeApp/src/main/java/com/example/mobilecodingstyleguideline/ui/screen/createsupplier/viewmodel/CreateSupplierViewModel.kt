@@ -74,7 +74,7 @@ class CreateSupplierViewModel(
                                 items = data.item.map {
                                     CreateSupplierFormData.Item(
                                         itemName = it.itemName,
-                                        itemSku = it.itemSku
+                                        itemSku = it.sku
                                     )
                                 },
                                 country = data.country,
@@ -117,7 +117,7 @@ class CreateSupplierViewModel(
                             formOption = CreateSupplierFormOption(
                                 itemNameList = Util.generateOptionsDataString(data.flatMap { supplier -> supplier.item.map { it.itemName } }
                                     .distinct()),
-                                itemSkuList = Util.generateOptionsDataString(data.flatMap { supplier -> supplier.item.flatMap { item -> item.itemSku.map { it } } }
+                                itemSkuList = Util.generateOptionsDataString(data.flatMap { supplier -> supplier.item.flatMap { item -> item.sku.map { it } } }
                                     .distinct()),
                                 country = Util.generateOptionsDataString(data.map { it.country }
                                     .distinct()),

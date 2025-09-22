@@ -13,12 +13,12 @@ import com.example.shared.data.source.network.model.response.supplier.GetSupplie
 import com.example.shared.data.source.network.model.response.supplier.GetSupplierResponse
 import com.example.shared.data.source.network.model.response.supplier.PatchEditStatusSupplierResponse
 import com.example.shared.data.source.network.model.response.supplier.PutEditSupplierResponse
-import com.example.shared.data.source.network.services.SupplierKtorService
+import com.example.shared.data.source.network.services.SupplierApiService
 import com.example.shared.util.ApiUtil
 import io.ktor.client.call.body
 
 class SupplierApiDataSourceImpl(
-    private val supplierApi: SupplierKtorService
+    private val supplierApi: SupplierApiService
 ) : SupplierApiDataSource {
     override suspend fun getSuppliers(
         token: String,

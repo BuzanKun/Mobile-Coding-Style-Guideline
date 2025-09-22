@@ -1,5 +1,7 @@
 import java.util.Properties
 
+include(":shared-test")
+
 include(":shared")
 
 pluginManagement {

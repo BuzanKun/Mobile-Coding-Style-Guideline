@@ -28,7 +28,7 @@ data class CreateSupplierUiState(
                 id = it.id,
                 supplierId = it.supplierId,
                 itemName = it.itemName,
-                itemSku = it.itemSku
+                sku = it.itemSku
             )
         },
         companyName = formData.companyName,

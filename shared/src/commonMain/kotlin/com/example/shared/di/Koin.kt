@@ -7,7 +7,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
     startKoin {
         appDeclaration()
         modules(
-            // Load your common modules
             dataSourceModule,
             dispatcherModule,
             mapperModule,

@@ -52,7 +52,7 @@ class SupplierMapper() {
                 id = it.id,
                 supplierId = it.supplierId,
                 itemName = it.itemName,
-                itemSku = it.sku
+                sku = it.sku
             )
         }
     }
@@ -63,7 +63,7 @@ class SupplierMapper() {
                 id = it.id,
                 supplierId = it.supplierId,
                 itemName = it.itemName,
-                itemSku = it.sku
+                sku = it.sku
             )
         }
     }
