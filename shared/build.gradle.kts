@@ -73,6 +73,7 @@ kotlin {
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.ktor.client.logging)
+                implementation(libs.ktor.client.auth)
 
 
                 // Koin
@@ -93,9 +94,7 @@ kotlin {
 
                 // Ktor
                 implementation(libs.ktor.client.mock)
-
-                // Koin
-                implementation(libs.koin.test)
+                implementation(libs.ktor.client.auth)
             }
         }
 

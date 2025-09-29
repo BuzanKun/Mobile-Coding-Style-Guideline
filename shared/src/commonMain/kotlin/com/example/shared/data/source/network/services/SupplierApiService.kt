@@ -6,20 +6,18 @@ import com.example.shared.data.source.network.model.request.supplier.PatchEditSt
 import io.ktor.client.statement.HttpResponse
 
 interface SupplierApiService {
-    suspend fun getSuppliers(token: String, query: Map<String, String?> = mapOf()): HttpResponse
-    suspend fun getSupplierById(token: String, id: String): HttpResponse
+    suspend fun getSuppliers(query: Map<String, String?> = mapOf()): HttpResponse
+    suspend fun getSupplierById(id: String): HttpResponse
     suspend fun getSupplierOption(
-        token: String,
         query: Map<String, Boolean?> = mapOf()
     ): HttpResponse
 
-    suspend fun createSupplier(token: String, body: CreateUpdateSupplierBody): HttpResponse
-    suspend fun deleteSupplier(token: String, body: DeleteSupplierBody): HttpResponse
+    suspend fun createSupplier(body: CreateUpdateSupplierBody): HttpResponse
+    suspend fun deleteSupplier(body: DeleteSupplierBody): HttpResponse
     suspend fun editSupplier(
-        token: String,
         id: String,
         body: CreateUpdateSupplierBody
     ): HttpResponse
 
-    suspend fun editStatusSupplier(token: String, body: PatchEditStatusSupplierBody): HttpResponse
+    suspend fun editStatusSupplier(body: PatchEditStatusSupplierBody): HttpResponse
 }

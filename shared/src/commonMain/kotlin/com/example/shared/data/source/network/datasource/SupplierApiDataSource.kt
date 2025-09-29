@@ -16,38 +16,31 @@ import com.example.shared.data.source.network.model.response.supplier.PutEditSup
 
 interface SupplierApiDataSource {
     suspend fun getSuppliers(
-        token: String,
         query: GetSupplierQueryParams
     ): ApiResponse<GetSupplierResponse>
 
     suspend fun getSupplierById(
-        token: String,
         id: String
     ): ApiResponse<GetSupplierByIdResponse>
 
     suspend fun getSupplierOption(
-        token: String,
         query: GetSupplierOptionQueryParams
     ): ApiResponse<GetSupplierOptionResponse>
 
     suspend fun createSupplier(
-        token: String,
         body: CreateUpdateSupplierBody
     ): ApiResponse<CreateSupplierResponse>
 
     suspend fun deleteSupplier(
-        token: String,
         body: DeleteSupplierBody
     ): ApiResponse<DeleteSupplierResponse>
 
     suspend fun editSupplier(
-        token: String,
         id: String,
         body: CreateUpdateSupplierBody
     ): ApiResponse<PutEditSupplierResponse>
 
     suspend fun editStatusSupplier(
-        token: String,
         body: PatchEditStatusSupplierBody
     ): ApiResponse<PatchEditStatusSupplierResponse>
 }

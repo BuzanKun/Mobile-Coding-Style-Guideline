@@ -31,7 +31,6 @@ class SupplierApiDataSourceImplTest {
 
     private lateinit var fakeApiService: FakeSupplierApiService
     private lateinit var dataSource: SupplierApiDataSourceImpl
-    private val token = "dummy-bearer-token"
 
     @BeforeTest
     fun setUp() {
@@ -104,7 +103,7 @@ class SupplierApiDataSourceImplTest {
             fakeApiService.setHttpResponseToReturn(successfulResponse)
 
             // Act
-            val result = dataSource.getSuppliers(token, GetSupplierQueryParams())
+            val result = dataSource.getSuppliers(GetSupplierQueryParams())
 
             // Assert
             assertIs<ApiResponse.Success<*>>(result, "Result should be ApiResponse.Success")
@@ -119,7 +118,7 @@ class SupplierApiDataSourceImplTest {
             fakeApiService.setShouldThrowException(true)
 
             // Act
-            val result = dataSource.getSuppliers(token, GetSupplierQueryParams())
+            val result = dataSource.getSuppliers(GetSupplierQueryParams())
 
             // Assert
             assertIs<ApiResponse.Error>(result, "Result should be ApiResponse.Error")
@@ -172,7 +171,7 @@ class SupplierApiDataSourceImplTest {
             fakeApiService.setHttpResponseToReturn(successfulResponse)
 
             // Act
-            val result = dataSource.getSupplierById(token, "id")
+            val result = dataSource.getSupplierById("id")
 
             // Assert
             assertIs<ApiResponse.Success<*>>(result, "Result should be ApiResponse.Success")
@@ -187,7 +186,7 @@ class SupplierApiDataSourceImplTest {
             fakeApiService.setShouldThrowException(true)
 
             // Act
-            val result = dataSource.getSupplierById(token, "id")
+            val result = dataSource.getSupplierById("id")
 
             // Assert
             assertIs<ApiResponse.Error>(result, "Result should be ApiResponse.Error")
@@ -267,7 +266,7 @@ class SupplierApiDataSourceImplTest {
             fakeApiService.setHttpResponseToReturn(successfulResponse)
 
             // Act
-            val result = dataSource.getSupplierOption(token, GetSupplierOptionQueryParams())
+            val result = dataSource.getSupplierOption(GetSupplierOptionQueryParams())
 
             // Assert
             assertIs<ApiResponse.Success<*>>(result, "Result should be ApiResponse.Success")
@@ -285,7 +284,7 @@ class SupplierApiDataSourceImplTest {
             fakeApiService.setShouldThrowException(true)
 
             // Act
-            val result = dataSource.getSupplierOption(token, GetSupplierOptionQueryParams())
+            val result = dataSource.getSupplierOption(GetSupplierOptionQueryParams())
 
             // Assert
             assertIs<ApiResponse.Error>(result, "Result should be ApiResponse.Error")
@@ -315,7 +314,7 @@ class SupplierApiDataSourceImplTest {
         fakeApiService.setHttpResponseToReturn(successfulResponse)
 
         // Act
-        val result = dataSource.createSupplier(token, createRequestBody)
+        val result = dataSource.createSupplier(createRequestBody)
 
         // Assert
         assertIs<ApiResponse.Success<*>>(result, "Result should be ApiResponse.Success")
@@ -328,7 +327,7 @@ class SupplierApiDataSourceImplTest {
             fakeApiService.setShouldThrowException(true)
 
             // Act
-            val result = dataSource.createSupplier(token, createRequestBody)
+            val result = dataSource.createSupplier(createRequestBody)
 
             // Assert
             assertIs<ApiResponse.Error>(result, "Result should be ApiResponse.Error")
@@ -350,7 +349,7 @@ class SupplierApiDataSourceImplTest {
         fakeApiService.setHttpResponseToReturn(successfulResponse)
 
         // Act
-        val result = dataSource.deleteSupplier(token, deleteRequestBody)
+        val result = dataSource.deleteSupplier(deleteRequestBody)
 
         // Assert
         assertIs<ApiResponse.Success<*>>(result, "Result should be ApiResponse.Success")
@@ -363,7 +362,7 @@ class SupplierApiDataSourceImplTest {
             fakeApiService.setShouldThrowException(true)
 
             // Act
-            val result = dataSource.deleteSupplier(token, deleteRequestBody)
+            val result = dataSource.deleteSupplier(deleteRequestBody)
 
             // Assert
             assertIs<ApiResponse.Error>(result, "Result should be ApiResponse.Error")
@@ -393,7 +392,7 @@ class SupplierApiDataSourceImplTest {
         fakeApiService.setHttpResponseToReturn(successfulResponse)
 
         // Act
-        val result = dataSource.editSupplier(token, "id", editSupplierBody)
+        val result = dataSource.editSupplier("id", editSupplierBody)
 
         // Assert
         assertIs<ApiResponse.Success<*>>(result, "Result should be ApiResponse.Success")
@@ -406,7 +405,7 @@ class SupplierApiDataSourceImplTest {
             fakeApiService.setShouldThrowException(true)
 
             // Act
-            val result = dataSource.editSupplier(token, "id", editSupplierBody)
+            val result = dataSource.editSupplier("id", editSupplierBody)
 
             // Assert
             assertIs<ApiResponse.Error>(result, "Result should be ApiResponse.Error")
@@ -432,7 +431,7 @@ class SupplierApiDataSourceImplTest {
             fakeApiService.setHttpResponseToReturn(successfulResponse)
 
             // Act
-            val result = dataSource.editStatusSupplier(token, editStatusSupplierBody)
+            val result = dataSource.editStatusSupplier(editStatusSupplierBody)
 
             // Assert
             assertIs<ApiResponse.Success<*>>(result, "Result should be ApiResponse.Success")
@@ -445,7 +444,7 @@ class SupplierApiDataSourceImplTest {
             fakeApiService.setShouldThrowException(true)
 
             // Act
-            val result = dataSource.editStatusSupplier(token, editStatusSupplierBody)
+            val result = dataSource.editStatusSupplier(editStatusSupplierBody)
 
             // Assert
             assertIs<ApiResponse.Error>(result, "Result should be ApiResponse.Error")

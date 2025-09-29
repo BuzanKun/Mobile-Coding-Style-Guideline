@@ -21,11 +21,10 @@ class SupplierApiDataSourceImpl(
     private val supplierApi: SupplierApiService
 ) : SupplierApiDataSource {
     override suspend fun getSuppliers(
-        token: String,
         query: GetSupplierQueryParams
     ): ApiResponse<GetSupplierResponse> {
         return try {
-            val response = supplierApi.getSuppliers(token, query.toQueryMap())
+            val response = supplierApi.getSuppliers(query.toQueryMap())
             ApiResponse.Success(response, response.body())
         } catch (e: Exception) {
             ApiResponse.Error(ApiUtil.handleApiError(e))
@@ -33,11 +32,10 @@ class SupplierApiDataSourceImpl(
     }
 
     override suspend fun getSupplierById(
-        token: String,
         id: String
     ): ApiResponse<GetSupplierByIdResponse> {
         return try {
-            val response = supplierApi.getSupplierById(token, id)
+            val response = supplierApi.getSupplierById(id)
             ApiResponse.Success(response, response.body())
         } catch (e: Exception) {
             ApiResponse.Error(ApiUtil.handleApiError(e))
@@ -45,11 +43,10 @@ class SupplierApiDataSourceImpl(
     }
 
     override suspend fun getSupplierOption(
-        token: String,
         query: GetSupplierOptionQueryParams
     ): ApiResponse<GetSupplierOptionResponse> {
         return try {
-            val response = supplierApi.getSupplierOption(token, query.toQueryMap())
+            val response = supplierApi.getSupplierOption(query.toQueryMap())
             ApiResponse.Success(response, response.body())
         } catch (e: Exception) {
             ApiResponse.Error(ApiUtil.handleApiError(e))
@@ -57,11 +54,10 @@ class SupplierApiDataSourceImpl(
     }
 
     override suspend fun createSupplier(
-        token: String,
         body: CreateUpdateSupplierBody
     ): ApiResponse<CreateSupplierResponse> {
         return try {
-            val response = supplierApi.createSupplier(token, body)
+            val response = supplierApi.createSupplier(body)
             ApiResponse.Success(response, response.body())
         } catch (e: Exception) {
             ApiResponse.Error(ApiUtil.handleApiError(e))
@@ -69,11 +65,10 @@ class SupplierApiDataSourceImpl(
     }
 
     override suspend fun deleteSupplier(
-        token: String,
         body: DeleteSupplierBody
     ): ApiResponse<DeleteSupplierResponse> {
         return try {
-            val response = supplierApi.deleteSupplier(token, body)
+            val response = supplierApi.deleteSupplier(body)
             ApiResponse.Success(response, response.body())
         } catch (e: Exception) {
             ApiResponse.Error(ApiUtil.handleApiError(e))
@@ -81,12 +76,11 @@ class SupplierApiDataSourceImpl(
     }
 
     override suspend fun editSupplier(
-        token: String,
         id: String,
         body: CreateUpdateSupplierBody
     ): ApiResponse<PutEditSupplierResponse> {
         return try {
-            val response = supplierApi.editSupplier(token, id, body)
+            val response = supplierApi.editSupplier(id, body)
             ApiResponse.Success(response, response.body())
         } catch (e: Exception) {
             ApiResponse.Error(ApiUtil.handleApiError(e))
@@ -94,11 +88,10 @@ class SupplierApiDataSourceImpl(
     }
 
     override suspend fun editStatusSupplier(
-        token: String,
         body: PatchEditStatusSupplierBody
     ): ApiResponse<PatchEditStatusSupplierResponse> {
         return try {
-            val response = supplierApi.editStatusSupplier(token, body)
+            val response = supplierApi.editStatusSupplier(body)
             ApiResponse.Success(response, response.body())
         } catch (e: Exception) {
             ApiResponse.Error(ApiUtil.handleApiError(e))

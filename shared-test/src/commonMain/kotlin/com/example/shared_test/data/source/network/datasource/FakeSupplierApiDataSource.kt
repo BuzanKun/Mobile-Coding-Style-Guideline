@@ -34,8 +34,6 @@ import kotlin.time.ExperimentalTime
  * This class simulates the behavior of a real API data source by managing an
  * in-memory list. It allows for controlled testing of success and failure
  * scenarios without making actual network calls. It is fully KMP-compatible.
- *
- * Use this Fake in your `commonTest` source set to test the `SupplierRepositoryImpl`.
  */
 
 
@@ -104,7 +102,6 @@ class FakeSupplierApiDataSource : SupplierApiDataSource {
     // --- Interface Implementation ---
 
     override suspend fun getSuppliers(
-        token: String,
         query: GetSupplierQueryParams
     ): ApiResponse<GetSupplierResponse> {
         if (shouldThrowException) throw RuntimeException(FAKE_UNEXPECTED_ERROR_MESSAGE) // <-- NEW
@@ -122,7 +119,6 @@ class FakeSupplierApiDataSource : SupplierApiDataSource {
     }
 
     override suspend fun getSupplierById(
-        token: String,
         id: String
     ): ApiResponse<GetSupplierByIdResponse> {
         if (shouldThrowException) throw RuntimeException(FAKE_UNEXPECTED_ERROR_MESSAGE)
@@ -149,7 +145,6 @@ class FakeSupplierApiDataSource : SupplierApiDataSource {
     }
 
     override suspend fun getSupplierOption(
-        token: String,
         query: GetSupplierOptionQueryParams
     ): ApiResponse<GetSupplierOptionResponse> {
         if (shouldThrowException) throw RuntimeException(FAKE_UNEXPECTED_ERROR_MESSAGE)
@@ -192,7 +187,6 @@ class FakeSupplierApiDataSource : SupplierApiDataSource {
     }
 
     override suspend fun createSupplier(
-        token: String,
         body: CreateUpdateSupplierBody
     ): ApiResponse<CreateSupplierResponse> {
         if (shouldThrowException) throw RuntimeException(FAKE_UNEXPECTED_ERROR_MESSAGE) // <-- NEW
@@ -227,7 +221,6 @@ class FakeSupplierApiDataSource : SupplierApiDataSource {
     }
 
     override suspend fun deleteSupplier(
-        token: String,
         body: DeleteSupplierBody
     ): ApiResponse<DeleteSupplierResponse> {
         if (shouldThrowException) throw RuntimeException(FAKE_UNEXPECTED_ERROR_MESSAGE) // <-- NEW
@@ -244,7 +237,6 @@ class FakeSupplierApiDataSource : SupplierApiDataSource {
     }
 
     override suspend fun editSupplier(
-        token: String,
         id: String,
         body: CreateUpdateSupplierBody
     ): ApiResponse<PutEditSupplierResponse> {
@@ -278,7 +270,6 @@ class FakeSupplierApiDataSource : SupplierApiDataSource {
     }
 
     override suspend fun editStatusSupplier(
-        token: String,
         body: PatchEditStatusSupplierBody
     ): ApiResponse<PatchEditStatusSupplierResponse> {
         if (shouldThrowException) throw RuntimeException(FAKE_UNEXPECTED_ERROR_MESSAGE) // <-- NEW

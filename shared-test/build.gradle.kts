@@ -31,20 +31,16 @@ kotlin {
 
                 // Coroutines
                 implementation(libs.kotlinx.coroutines.core)
-                implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.kotlinx.serialization.json)
-
-                // Koin
-                implementation(project.dependencies.platform(libs.koin.bom))
-                api(libs.koin.core)
-
-                // Kotlin Test
-                implementation(libs.kotlin.test)
 
                 // Ktor
                 implementation(project.dependencies.platform(libs.ktor.bom))
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.mock)
+
+                // Koin
+                implementation(project.dependencies.platform(libs.koin.bom))
+                api(libs.koin.core)
             }
         }
     }

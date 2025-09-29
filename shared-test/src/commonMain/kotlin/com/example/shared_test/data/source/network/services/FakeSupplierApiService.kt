@@ -44,33 +44,29 @@ class FakeSupplierApiService : SupplierApiService {
         return httpResponseToReturn
     }
 
-    override suspend fun getSuppliers(token: String, query: Map<String, String?>): HttpResponse =
+    override suspend fun getSuppliers(query: Map<String, String?>): HttpResponse =
         getResponseOrThrow()
 
-    override suspend fun getSupplierById(token: String, id: String): HttpResponse =
+    override suspend fun getSupplierById(id: String): HttpResponse =
         getResponseOrThrow()
 
     override suspend fun getSupplierOption(
-        token: String,
         query: Map<String, Boolean?>
     ): HttpResponse = getResponseOrThrow()
 
     override suspend fun createSupplier(
-        token: String,
         body: CreateUpdateSupplierBody
     ): HttpResponse = getResponseOrThrow()
 
-    override suspend fun deleteSupplier(token: String, body: DeleteSupplierBody): HttpResponse =
+    override suspend fun deleteSupplier(body: DeleteSupplierBody): HttpResponse =
         getResponseOrThrow()
 
     override suspend fun editSupplier(
-        token: String,
         id: String,
         body: CreateUpdateSupplierBody
     ): HttpResponse = getResponseOrThrow()
 
     override suspend fun editStatusSupplier(
-        token: String,
         body: PatchEditStatusSupplierBody
     ): HttpResponse = getResponseOrThrow()
 }

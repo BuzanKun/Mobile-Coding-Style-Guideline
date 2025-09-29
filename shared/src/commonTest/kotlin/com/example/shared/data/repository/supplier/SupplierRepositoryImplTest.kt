@@ -71,7 +71,6 @@ private val supplierDto = listOf(
 private const val FAKE_UNEXPECTED_ERROR_MESSAGE = "Fake Unexpected Exception"
 private const val FAKE_NETWORK_ERROR_MSG = "Fake Network Error"
 private const val RESPONSE_ERROR_MSG = Constant.RESPONSE_ERROR
-private const val EMPTY_TOKEN_ERROR_MSG = Constant.EMPTY_TOKEN_ERROR
 
 /**
  * Unit tests for the `SupplierRepositoryImpl`.
@@ -84,7 +83,7 @@ class SupplierRepositoryImplTest {
 
     private lateinit var fakeDataSource: FakeSupplierApiDataSource
     private val supplierMapper: SupplierMapper = SupplierMapper()
-    private lateinit var supplierRepository: SupplierRepositoryImpl
+    private lateinit var supplierRepository: SupplierRepository
 
     @BeforeTest
     fun setUp() {
@@ -179,24 +178,6 @@ class SupplierRepositoryImplTest {
             assertEquals(FAKE_UNEXPECTED_ERROR_MESSAGE, result.message)
         }
 
-    @Test
-    fun `getSupplierList SHOULD return Error WHEN token is empty`() = runTest {
-        // Arrange
-        val repositoryWithEmptyToken = SupplierRepositoryImpl(
-            supplierApiDataSource = fakeDataSource,
-            supplierMapper = supplierMapper,
-            ioDispatcher = Dispatchers.Unconfined,
-            token = ""
-        )
-
-        // Act
-        val result = repositoryWithEmptyToken.getSupplierList(GetSupplierQueryParams()).first()
-
-        // Assert
-        assertIs<Result.Error<*>>(result)
-        assertEquals(EMPTY_TOKEN_ERROR_MSG, result.message)
-    }
-
     // --- getSupplierById Tests ---
 
     @Test
@@ -272,24 +253,6 @@ class SupplierRepositoryImplTest {
             assertIs<Result.Error<*>>(result)
             assertEquals(FAKE_UNEXPECTED_ERROR_MESSAGE, result.message)
         }
-
-    @Test
-    fun `getSupplierById methods SHOULD return Error WHEN token is empty`() = runTest {
-        // Arrange
-        val repositoryWithEmptyToken = SupplierRepositoryImpl(
-            supplierApiDataSource = fakeDataSource,
-            supplierMapper = supplierMapper,
-            ioDispatcher = Dispatchers.Unconfined,
-            token = ""
-        )
-
-        // Act
-        val result = repositoryWithEmptyToken.getSupplierById("1").first()
-
-        // Assert
-        assertIs<Result.Error<*>>(result)
-        assertEquals(EMPTY_TOKEN_ERROR_MSG, result.message)
-    }
 
     // --- getSupplierOption Tests ---
 
@@ -375,25 +338,6 @@ class SupplierRepositoryImplTest {
             assertEquals(FAKE_UNEXPECTED_ERROR_MESSAGE, result.message)
         }
 
-    @Test
-    fun `getSupplierOption methods SHOULD return Error WHEN token is empty`() = runTest {
-        // Arrange
-        val repositoryWithEmptyToken = SupplierRepositoryImpl(
-            supplierApiDataSource = fakeDataSource,
-            supplierMapper = supplierMapper,
-            ioDispatcher = Dispatchers.Unconfined,
-            token = ""
-        )
-
-        // Act
-        val result =
-            repositoryWithEmptyToken.getSupplierOption(GetSupplierOptionQueryParams()).first()
-
-        // Assert
-        assertIs<Result.Error<*>>(result)
-        assertEquals(EMPTY_TOKEN_ERROR_MSG, result.message)
-    }
-
     // --- createSupplier Tests ---
 
     val createRequestBody = CreateUpdateSupplierBody(
@@ -472,25 +416,6 @@ class SupplierRepositoryImplTest {
             assertEquals(FAKE_UNEXPECTED_ERROR_MESSAGE, result.message)
         }
 
-    @Test
-    fun `createSupplier methods SHOULD return Error WHEN token is empty`() = runTest {
-        // Arrange
-        val requestBody = createRequestBody
-        val repositoryWithEmptyToken = SupplierRepositoryImpl(
-            supplierApiDataSource = fakeDataSource,
-            supplierMapper = supplierMapper,
-            ioDispatcher = Dispatchers.Unconfined,
-            token = ""
-        )
-
-        // Act
-        val result = repositoryWithEmptyToken.createSupplier(requestBody).first()
-
-        // Assert
-        assertIs<Result.Error<*>>(result)
-        assertEquals(EMPTY_TOKEN_ERROR_MSG, result.message)
-    }
-
     // --- deleteSupplier Tests ---
 
     val deleteRequestBody = DeleteSupplierBody(listOf("1"))
@@ -563,25 +488,6 @@ class SupplierRepositoryImplTest {
             assertIs<Result.Error<*>>(result)
             assertEquals(FAKE_UNEXPECTED_ERROR_MESSAGE, result.message)
         }
-
-    @Test
-    fun `deleteSupplier methods SHOULD return Error WHEN token is empty`() = runTest {
-        // Arrange
-        val requestBody = deleteRequestBody
-        val repositoryWithEmptyToken = SupplierRepositoryImpl(
-            supplierApiDataSource = fakeDataSource,
-            supplierMapper = supplierMapper,
-            ioDispatcher = Dispatchers.Unconfined,
-            token = ""
-        )
-
-        // Act
-        val result = repositoryWithEmptyToken.deleteSupplier(requestBody).first()
-
-        // Assert
-        assertIs<Result.Error<*>>(result)
-        assertEquals(EMPTY_TOKEN_ERROR_MSG, result.message)
-    }
 
     // --- editSupplier Tests ---
 
@@ -661,25 +567,6 @@ class SupplierRepositoryImplTest {
             assertEquals(FAKE_UNEXPECTED_ERROR_MESSAGE, result.message)
         }
 
-    @Test
-    fun `editSupplier methods SHOULD return Error WHEN token is empty`() = runTest {
-        // Arrange
-        val requestBody = editSupplierBody
-        val repositoryWithEmptyToken = SupplierRepositoryImpl(
-            supplierApiDataSource = fakeDataSource,
-            supplierMapper = supplierMapper,
-            ioDispatcher = Dispatchers.Unconfined,
-            token = ""
-        )
-
-        // Act
-        val result = repositoryWithEmptyToken.editSupplier("1", requestBody).first()
-
-        // Assert
-        assertIs<Result.Error<*>>(result)
-        assertEquals(EMPTY_TOKEN_ERROR_MSG, result.message)
-    }
-
     // --- editStatusSupplier Tests ---
 
     val editStatusbody = PatchEditStatusSupplierBody(
@@ -753,23 +640,4 @@ class SupplierRepositoryImplTest {
             assertIs<Result.Error<*>>(result)
             assertEquals(FAKE_UNEXPECTED_ERROR_MESSAGE, result.message)
         }
-
-    @Test
-    fun `editStatusSupplier methods SHOULD return Error WHEN token is empty`() = runTest {
-        // Arrange
-        val requestBody = editStatusbody
-        val repositoryWithEmptyToken = SupplierRepositoryImpl(
-            supplierApiDataSource = fakeDataSource,
-            supplierMapper = supplierMapper,
-            ioDispatcher = Dispatchers.Unconfined,
-            token = ""
-        )
-
-        // Act
-        val result = repositoryWithEmptyToken.editStatusSupplier(requestBody).first()
-
-        // Assert
-        assertIs<Result.Error<*>>(result)
-        assertEquals(EMPTY_TOKEN_ERROR_MSG, result.message)
-    }
 }

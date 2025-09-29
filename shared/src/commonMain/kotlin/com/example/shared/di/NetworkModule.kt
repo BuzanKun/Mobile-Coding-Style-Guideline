@@ -4,9 +4,14 @@ import com.example.shared.util.Constant
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.dsl.module
@@ -16,6 +21,13 @@ expect fun platformHttpEngine(): HttpClientEngine
 val networkModule = module {
     single {
         HttpClient(platformHttpEngine()) {
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        BearerTokens(accessToken = Constant.BEARER_TOKEN, refreshToken = "")
+                    }
+                }
+            }
             // Logging Plugin
             install(Logging) {
                 level = LogLevel.ALL
@@ -31,6 +43,7 @@ val networkModule = module {
             // Default Request Plugin
             install(DefaultRequest) {
                 url(Constant.BASE_URL)
+                contentType(ContentType.Application.Json)
             }
         }
     }

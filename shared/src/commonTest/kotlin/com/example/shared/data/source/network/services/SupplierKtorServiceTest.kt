@@ -1,16 +1,27 @@
 package com.example.shared.data.source.network.services
+
 import com.example.shared.data.source.network.model.request.supplier.CreateUpdateSupplierBody
 import com.example.shared.data.source.network.model.request.supplier.DeleteSupplierBody
 import com.example.shared.data.source.network.model.request.supplier.GetSupplierQueryParams
 import com.example.shared.data.source.network.model.request.supplier.PatchEditStatusSupplierBody
-import io.ktor.client.*
-import io.ktor.client.engine.mock.*
-import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.MockRequestHandleScope
+import io.ktor.client.engine.mock.respond
+import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.HttpRequestData
 import io.ktor.client.request.HttpResponseData
-import io.ktor.http.*
+import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.TextContent
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.http.contentType
+import io.ktor.http.headersOf
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
@@ -18,7 +29,9 @@ import kotlin.test.assertEquals
 
 class SupplierKtorServiceTest {
 
-    private val token = "Bearer dummy-bearer-token"
+    private val rawToken = "Bearer dummy-bearer-token"
+
+    private val expectedAuthHeader = "Bearer $rawToken"
 
     private fun createServiceWithMockEngine(
         handler: suspend MockRequestHandleScope.(HttpRequestData) -> HttpResponseData
@@ -31,6 +44,16 @@ class SupplierKtorServiceTest {
                     encodeDefaults = true
                 })
             }
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        BearerTokens(accessToken = rawToken, refreshToken = "")
+                    }
+                }
+            }
+            install(DefaultRequest) {
+                contentType(ContentType.Application.Json)
+            }
         }
         return SupplierKtorService(httpClient)
     }
@@ -41,12 +64,12 @@ class SupplierKtorServiceTest {
         val service = createServiceWithMockEngine { request ->
             assertEquals(HttpMethod.Get, request.method)
             assertEquals("/supplier", request.url.encodedPath)
-            assertEquals(token, request.headers["Authorization"])
+            assertEquals(expectedAuthHeader, request.headers["Authorization"])
             respond("{}", headers = headersOf("Content-Type", "application/json"))
         }
 
         // Act
-        val response = service.getSuppliers(token, GetSupplierQueryParams().toQueryMap())
+        val response = service.getSuppliers(GetSupplierQueryParams().toQueryMap())
 
         // Assert
         assertEquals(HttpStatusCode.OK, response.status)
@@ -59,12 +82,12 @@ class SupplierKtorServiceTest {
         val service = createServiceWithMockEngine { request ->
             assertEquals(HttpMethod.Get, request.method)
             assertEquals("/supplier/$supplierId", request.url.encodedPath)
-            assertEquals(token, request.headers["Authorization"])
+            assertEquals(expectedAuthHeader, request.headers["Authorization"])
             respond("{}", headers = headersOf("Content-Type", "application/json"))
         }
 
         // Act
-        val response = service.getSupplierById(token, supplierId)
+        val response = service.getSupplierById(supplierId)
 
         // Assert
         assertEquals(HttpStatusCode.OK, response.status)
@@ -79,11 +102,12 @@ class SupplierKtorServiceTest {
             assertEquals("/supplier/option", request.url.encodedPath)
             assertEquals("true", request.url.parameters["cityOption"])
             assertEquals("false", request.url.parameters["supplierOption"])
+            assertEquals(expectedAuthHeader, request.headers["Authorization"])
             respond("{}", headers = headersOf("Content-Type", "application/json"))
         }
 
         // Act
-        val response = service.getSupplierOption(token, query)
+        val response = service.getSupplierOption(query)
 
         // Assert
         assertEquals(HttpStatusCode.OK, response.status)
@@ -97,13 +121,14 @@ class SupplierKtorServiceTest {
         val service = createServiceWithMockEngine { request ->
             assertEquals(HttpMethod.Delete, request.method)
             assertEquals("/supplier", request.url.encodedPath)
+            assertEquals(expectedAuthHeader, request.headers["Authorization"])
             val actualBody = (request.body as TextContent).text
             assertEquals(expectedJsonBody, actualBody)
             respond("", HttpStatusCode.OK)
         }
 
         // Act
-        val response = service.deleteSupplier(token, requestBody)
+        val response = service.deleteSupplier(requestBody)
 
         // Assert
         assertEquals(HttpStatusCode.OK, response.status)
@@ -119,13 +144,14 @@ class SupplierKtorServiceTest {
         val service = createServiceWithMockEngine { request ->
             assertEquals(HttpMethod.Put, request.method)
             assertEquals("/supplier/$supplierId", request.url.encodedPath)
+            assertEquals(expectedAuthHeader, request.headers["Authorization"])
             val actualBody = (request.body as TextContent).text
             assertEquals(expectedJsonBody, actualBody)
             respond("{}", HttpStatusCode.OK)
         }
 
         // Act
-        val response = service.editSupplier(token, supplierId, requestBody)
+        val response = service.editSupplier(supplierId, requestBody)
 
         // Assert
         assertEquals(HttpStatusCode.OK, response.status)
@@ -139,13 +165,14 @@ class SupplierKtorServiceTest {
         val service = createServiceWithMockEngine { request ->
             assertEquals(HttpMethod.Patch, request.method)
             assertEquals("/supplier", request.url.encodedPath)
+            assertEquals(expectedAuthHeader, request.headers["Authorization"])
             val actualBody = (request.body as TextContent).text
             assertEquals(expectedJsonBody, actualBody)
             respond("{}", HttpStatusCode.OK)
         }
 
         // Act
-        val response = service.editStatusSupplier(token, requestBody)
+        val response = service.editStatusSupplier(requestBody)
 
         // Assert
         assertEquals(HttpStatusCode.OK, response.status)

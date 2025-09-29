@@ -23,39 +23,14 @@ class SupplierRepositoryImpl(
     private val supplierApiDataSource: SupplierApiDataSource,
     private val supplierMapper: SupplierMapper,
     private val ioDispatcher: CoroutineDispatcher,
-    private var token: String = Constant.BEARER_TOKEN
 ) : SupplierRepository {
     override fun getSupplierList(query: GetSupplierQueryParams): Flow<Result<List<SupplierEntity>>> =
         flow {
-            if (token.isNotBlank()) {
-                when (val response = supplierApiDataSource.getSuppliers(token, query)) {
-                    is ApiResponse.Success -> {
-                        if (response.httpResponse.status.isSuccess()) {
-                            val resultData = response.body.data?.data.orEmpty()
-                            emit(Result.Success(supplierMapper.mapSupplier(resultData)))
-                        } else {
-                            emit(Result.Error(Constant.RESPONSE_ERROR))
-                        }
-                    }
-
-                    is ApiResponse.Error -> {
-                        emit(Result.Error(response.exception.message))
-                    }
-                }
-            } else {
-                emit(Result.Error(Constant.EMPTY_TOKEN_ERROR))
-            }
-        }.catch {
-            emit(Result.Error(it.message))
-        }.flowOn(ioDispatcher)
-
-    override fun getSupplierById(path: String): Flow<Result<SupplierEntity>> = flow {
-        if (token.isNotBlank()) {
-            when (val response = supplierApiDataSource.getSupplierById(token, path)) {
+            when (val response = supplierApiDataSource.getSuppliers(query)) {
                 is ApiResponse.Success -> {
                     if (response.httpResponse.status.isSuccess()) {
-                        val resultData = response.body.data
-                        emit(Result.Success(supplierMapper.mapSupplierById(resultData)))
+                        val resultData = response.body.data?.data.orEmpty()
+                        emit(Result.Success(supplierMapper.mapSupplier(resultData)))
                     } else {
                         emit(Result.Error(Constant.RESPONSE_ERROR))
                     }
@@ -65,8 +40,24 @@ class SupplierRepositoryImpl(
                     emit(Result.Error(response.exception.message))
                 }
             }
-        } else {
-            emit(Result.Error(Constant.EMPTY_TOKEN_ERROR))
+        }.catch {
+            emit(Result.Error(it.message))
+        }.flowOn(ioDispatcher)
+
+    override fun getSupplierById(path: String): Flow<Result<SupplierEntity>> = flow {
+        when (val response = supplierApiDataSource.getSupplierById(path)) {
+            is ApiResponse.Success -> {
+                if (response.httpResponse.status.isSuccess()) {
+                    val resultData = response.body.data
+                    emit(Result.Success(supplierMapper.mapSupplierById(resultData)))
+                } else {
+                    emit(Result.Error(Constant.RESPONSE_ERROR))
+                }
+            }
+
+            is ApiResponse.Error -> {
+                emit(Result.Error(response.exception.message))
+            }
         }
     }.catch {
         emit(Result.Error(it.message))
@@ -74,67 +65,55 @@ class SupplierRepositoryImpl(
 
     override fun getSupplierOption(query: GetSupplierOptionQueryParams): Flow<Result<SupplierOptionEntity>> =
         flow {
-            if (token.isNotBlank()) {
-                when (val response = supplierApiDataSource.getSupplierOption(token, query)) {
-                    is ApiResponse.Success -> {
-                        if (response.httpResponse.status.isSuccess()) {
-                            val resultData = response.body.data
-                            emit(Result.Success(supplierMapper.mapSupplierOption(resultData)))
-                        } else {
-                            emit(Result.Error(Constant.RESPONSE_ERROR))
-                        }
-                    }
-
-                    is ApiResponse.Error -> {
-                        emit(Result.Error(response.exception.message))
+            when (val response = supplierApiDataSource.getSupplierOption(query)) {
+                is ApiResponse.Success -> {
+                    if (response.httpResponse.status.isSuccess()) {
+                        val resultData = response.body.data
+                        emit(Result.Success(supplierMapper.mapSupplierOption(resultData)))
+                    } else {
+                        emit(Result.Error(Constant.RESPONSE_ERROR))
                     }
                 }
-            } else {
-                emit(Result.Error(Constant.EMPTY_TOKEN_ERROR))
+
+                is ApiResponse.Error -> {
+                    emit(Result.Error(response.exception.message))
+                }
             }
         }.catch {
             emit(Result.Error(it.message))
         }.flowOn(ioDispatcher)
 
     override fun createSupplier(body: CreateUpdateSupplierBody): Flow<Result<Unit>> = flow {
-        if (token.isNotBlank()) {
-            when (val response = supplierApiDataSource.createSupplier(token, body)) {
-                is ApiResponse.Success -> {
-                    if (response.httpResponse.status.isSuccess()) {
-                        emit(Result.Success(Unit))
-                    } else {
-                        emit(Result.Error(Constant.RESPONSE_ERROR))
-                    }
-                }
-
-                is ApiResponse.Error -> {
-                    emit(Result.Error(response.exception.message))
+        when (val response = supplierApiDataSource.createSupplier(body)) {
+            is ApiResponse.Success -> {
+                if (response.httpResponse.status.isSuccess()) {
+                    emit(Result.Success(Unit))
+                } else {
+                    emit(Result.Error(Constant.RESPONSE_ERROR))
                 }
             }
-        } else {
-            emit(Result.Error(Constant.EMPTY_TOKEN_ERROR))
+
+            is ApiResponse.Error -> {
+                emit(Result.Error(response.exception.message))
+            }
         }
     }.catch {
         emit(Result.Error(it.message))
     }.flowOn(ioDispatcher)
 
     override fun deleteSupplier(body: DeleteSupplierBody): Flow<Result<Unit>> = flow {
-        if (token.isNotBlank()) {
-            when (val response = supplierApiDataSource.deleteSupplier(token, body)) {
-                is ApiResponse.Success -> {
-                    if (response.httpResponse.status.isSuccess()) {
-                        emit(Result.Success(Unit))
-                    } else {
-                        emit(Result.Error(Constant.RESPONSE_ERROR))
-                    }
-                }
-
-                is ApiResponse.Error -> {
-                    emit(Result.Error(response.exception.message))
+        when (val response = supplierApiDataSource.deleteSupplier(body)) {
+            is ApiResponse.Success -> {
+                if (response.httpResponse.status.isSuccess()) {
+                    emit(Result.Success(Unit))
+                } else {
+                    emit(Result.Error(Constant.RESPONSE_ERROR))
                 }
             }
-        } else {
-            emit(Result.Error(Constant.EMPTY_TOKEN_ERROR))
+
+            is ApiResponse.Error -> {
+                emit(Result.Error(response.exception.message))
+            }
         }
     }.catch {
         emit(Result.Error(it.message))
@@ -144,22 +123,18 @@ class SupplierRepositoryImpl(
         path: String,
         body: CreateUpdateSupplierBody
     ): Flow<Result<Unit>> = flow {
-        if (token.isNotBlank()) {
-            when (val response = supplierApiDataSource.editSupplier(token, path, body)) {
-                is ApiResponse.Success -> {
-                    if (response.httpResponse.status.isSuccess()) {
-                        emit(Result.Success(Unit))
-                    } else {
-                        emit(Result.Error(Constant.RESPONSE_ERROR))
-                    }
-                }
-
-                is ApiResponse.Error -> {
-                    emit(Result.Error(response.exception.message))
+        when (val response = supplierApiDataSource.editSupplier(path, body)) {
+            is ApiResponse.Success -> {
+                if (response.httpResponse.status.isSuccess()) {
+                    emit(Result.Success(Unit))
+                } else {
+                    emit(Result.Error(Constant.RESPONSE_ERROR))
                 }
             }
-        } else {
-            emit(Result.Error(Constant.EMPTY_TOKEN_ERROR))
+
+            is ApiResponse.Error -> {
+                emit(Result.Error(response.exception.message))
+            }
         }
     }.catch {
         emit(Result.Error(it.message))
@@ -168,22 +143,18 @@ class SupplierRepositoryImpl(
     override fun editStatusSupplier(
         body: PatchEditStatusSupplierBody
     ): Flow<Result<Unit>> = flow {
-        if (token.isNotBlank()) {
-            when (val response = supplierApiDataSource.editStatusSupplier(token, body)) {
-                is ApiResponse.Success -> {
-                    if (response.httpResponse.status.isSuccess()) {
-                        emit(Result.Success(Unit))
-                    } else {
-                        emit(Result.Error(Constant.RESPONSE_ERROR))
-                    }
-                }
-
-                is ApiResponse.Error -> {
-                    emit(Result.Error(response.exception.message))
+        when (val response = supplierApiDataSource.editStatusSupplier(body)) {
+            is ApiResponse.Success -> {
+                if (response.httpResponse.status.isSuccess()) {
+                    emit(Result.Success(Unit))
+                } else {
+                    emit(Result.Error(Constant.RESPONSE_ERROR))
                 }
             }
-        } else {
-            emit(Result.Error(Constant.EMPTY_TOKEN_ERROR))
+
+            is ApiResponse.Error -> {
+                emit(Result.Error(response.exception.message))
+            }
         }
     }.catch {
         emit(Result.Error(it.message))
