@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mobilecodingstyleguideline.model.home.HomeCallback
@@ -63,7 +64,7 @@ fun HomeScreen(
         statusErrorMessage =
             "Error, failed to activate supplier. Please check your connection and try again."
     } else {
-        statusSuccessMessage = "Successs, supplier has been inactivated."
+        statusSuccessMessage = "Success, supplier has been inactivated."
         statusErrorMessage =
             "Error, failed to inactivate supplier. Please check your connection and try again."
     }
@@ -95,6 +96,7 @@ fun HomeScreen(
         },
         floatingActionButton = {
             CustomFloatingIconButton(
+                modifier = Modifier.testTag("addFab"),
                 icon = R.drawable.ic_add_fill_24dp,
                 containerColor = theme.warning500,
                 iconColor = theme.warning500

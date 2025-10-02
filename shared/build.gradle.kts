@@ -3,11 +3,12 @@ plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.android.lint)
     alias(libs.plugins.jetbrains.kotlin.serialization)
+    alias(libs.plugins.kotlinx.kover)
 }
 
 kotlin {
-    // Target declarations - add or remove as needed below. These define
-    // which platforms this KMP module supports.
+    // Target declarations - add or remove as needed below.
+    // These define which platforms this KMP module supports.
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
         namespace = "com.example.shared"
@@ -53,8 +54,8 @@ kotlin {
     }
 
     // Source set declarations.
-    // Declaring a target automatically creates a source set with the same name. By default, the
-    // Kotlin Gradle Plugin creates additional source sets that depend on each other, since it is
+    // Declaring a target automatically creates a source set with the same name.
+    // By default, the Kotlin Gradle Plugin creates additional source sets that depend on each other, since it is
     // common to share sources between related targets.
     // See: https://kotlinlang.org/docs/multiplatform-hierarchy.html
 
@@ -124,6 +125,73 @@ kotlin {
         iosMain {
             dependencies {
                 // Add iOS-specific dependencies here.
+            }
+        }
+    }
+}
+
+kover {
+    reports {
+        val excludePackages = listOf(
+            "com.example.shared.*.di.*",
+            "com.example.shared.*.*_Factory*",
+            "com.example.shared.*.*Module_*",
+            "com.example.shared.*.*MembersInjector*",
+            "com.example.shared.*.*_Impl*",
+            "com.example.shared.BuildConfig*",
+            "com.example.shared.*.Fake*",
+            "*_*Factory.*",
+            "*_*Factory*",
+            "*_Factory.*",
+        )
+
+        val includePackages = listOf(
+            "com.example.shared.data.*",
+            "com.example.shared.domain.*",
+            "com.example.shared.base.*",
+            "com.example.shared.util.*",
+        )
+
+        filters {
+            excludes {
+                classes(
+                    "com.example.shared.*.di.*",
+                    "com.example.shared.*.*_Factory*",
+                    "com.example.shared.*.*Module_*",
+                    "com.example.shared.*.*MembersInjector*",
+                    "com.example.shared.*.*_Impl*",
+                    "com.example.shared.BuildConfig*",
+                    "com.example.shared.*.Fake*",
+                )
+
+                packages(
+                    "kotlinx.coroutines.*"
+                )
+            }
+        }
+
+        total {
+            xml {
+                onCheck = true
+                xmlFile = file("result.xml")
+            }
+            html {
+                title = "Kover Report"
+                charset = "UTF-8"
+                onCheck = true
+            }
+            filters {
+                excludes {
+                    classes(excludePackages)
+                    packages("kotlinx.coroutines.*")
+                }
+
+
+                includes {
+                    packages(
+                        includePackages
+                    )
+                }
             }
         }
     }

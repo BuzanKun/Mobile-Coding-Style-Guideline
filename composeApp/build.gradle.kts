@@ -16,7 +16,8 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.example.mobilecodingstyleguideline.TestRunner"
+        // testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     flavorDimensions += "env"
@@ -51,6 +52,15 @@ android {
     buildFeatures {
         compose = true
     }
+    // FIX: Add packaging options to exclude duplicate resources from test dependencies
+    // This is often needed when dealing with Ktor, Coroutines, and other libraries in tests.
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/LICENSE-notice.md"
+            excludes += "META-INF/LICENSE.md"
+        }
+    }
 }
 
 dependencies {
@@ -64,13 +74,17 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
 
+    // Ktor (needed if your app module uses it directly)
+    implementation(project.dependencies.platform(libs.ktor.bom))
+    implementation(libs.ktor.client.core)
+
     // Navigation
     implementation(libs.androidx.navigation.compose)
 
     // TS Component
     implementation(libs.ts.fixed.component)
 
-    // Module
+    // Project Modules
     implementation(project(":shared"))
 
     implementation(libs.androidx.core.ktx)
@@ -82,31 +96,39 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    // Testing
+    // --- Testing Dependencies ---
+    // Unit Tests
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.truth)
     testImplementation(libs.turbine)
     testImplementation(libs.kotlinx.coroutines.test)
 
+    // Instrumentation (UI) Tests
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.androidx.junit)
-
+    androidTestImplementation(libs.mockk) // MockK for android tests if needed
+    androidTestImplementation(libs.truth)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.koin.test.junit4)
+
+    // Add koin-test for instrumentation tests to use KoinTest, get(), etc.
+    androidTestImplementation(libs.koin.test)
+
+    // Add the shared-test module to access fakes and test utilities
+    androidTestImplementation(project(":shared-test"))
+
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
+// Kover configuration remains the same
 kover {
     reports {
         val excludePackages = listOf(
-            "dagger.hilt.internal.aggregatedroot.codegen.*",
-            "hilt_aggregated_deps.*",
             "com.example.mobilecodingstyleguideline.*.di.*",
-            "com.example.mobilecodingstyleguideline.*.Hilt_*",
             "com.example.mobilecodingstyleguideline.*.*_Factory*",
-            "com.example.mobilecodingstyleguideline.*.*_HiltModules*",
             "com.example.mobilecodingstyleguideline.*.*Module_*",
             "com.example.mobilecodingstyleguideline.*.*MembersInjector*",
             "com.example.mobilecodingstyleguideline.*.*_Impl*",
@@ -117,8 +139,6 @@ kover {
             "*_*Factory.*",
             "*_*Factory*",
             "*_Factory.*",
-            "Hilt_*",
-            "*_Hilt*",
             "*.navigation.*"
         )
 
@@ -133,12 +153,8 @@ kover {
         filters {
             excludes {
                 classes(
-                    "dagger.hilt.internal.aggregatedroot.codegen.*",
-                    "hilt_aggregated_deps.*",
                     "com.example.mobilecodingstyleguideline.*.di.*",
-                    "com.example.mobilecodingstyleguideline.*.Hilt_*",
                     "com.example.mobilecodingstyleguideline.*.*_Factory*",
-                    "com.example.mobilecodingstyleguideline.*.*_HiltModules*",
                     "com.example.mobilecodingstyleguideline.*.*Module_*",
                     "com.example.mobilecodingstyleguideline.*.*MembersInjector*",
                     "com.example.mobilecodingstyleguideline.*.*_Impl*",
@@ -157,7 +173,6 @@ kover {
         variant("developmentDebug") {
             xml {
                 onCheck = true
-
                 xmlFile = file("result.xml")
             }
             filters {
@@ -174,9 +189,7 @@ kover {
             }
             html {
                 title = "Kover Report"
-
                 charset = "UTF-8"
-
                 onCheck = true
             }
         }

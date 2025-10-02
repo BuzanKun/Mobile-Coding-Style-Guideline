@@ -78,7 +78,7 @@ class FakeSupplierApiDataSource : SupplierApiDataSource {
     fun clear() {
         suppliersData.clear()
         shouldReturnError = false
-        shouldThrowException = false // <-- NEW
+        shouldThrowException = false
         nextId = 1
     }
 
@@ -275,11 +275,9 @@ class FakeSupplierApiDataSource : SupplierApiDataSource {
         if (shouldThrowException) throw RuntimeException(FAKE_UNEXPECTED_ERROR_MESSAGE) // <-- NEW
         if (shouldReturnError) return ApiResponse.Error(Exception(FAKE_NETWORK_ERROR_MSG))
 
-        var updatedCount = 0
         suppliersData.forEachIndexed { index, supplier ->
             if (supplier.id in body.supplierID) {
                 suppliersData[index] = supplier.copy(status = body.status)
-                updatedCount++
             }
         }
 

@@ -9,9 +9,9 @@ import com.example.shared.data.source.network.model.request.supplier.DeleteSuppl
 import com.example.shared.data.source.network.model.request.supplier.GetSupplierOptionQueryParams
 import com.example.shared.data.source.network.model.request.supplier.GetSupplierQueryParams
 import com.example.shared.data.source.network.model.request.supplier.PatchEditStatusSupplierBody
-import com.example.shared.data.source.network.model.response.supplier.GetSupplierResponse
 import com.example.shared.util.Constant
 import com.example.shared_test.data.source.network.datasource.FakeSupplierApiDataSource
+import com.example.shared_test.util.DataDummy
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -25,48 +25,7 @@ import kotlin.test.assertIs
 /**
  * A reusable DTO for populating the FakeDataSource.
  */
-private val supplierDto = listOf(
-    GetSupplierResponse.Data.Data(
-        id = "1",
-        status = false,
-        companyName = "Company A",
-        item = listOf(
-            GetSupplierResponse.Data.Data.Item(
-                itemName = "Item A",
-                sku = listOf(
-                    "Sku A"
-                )
-            )
-        ),
-        country = "Country A",
-        state = "State A",
-        city = "City A",
-        picName = "PIC A",
-        modifiedBy = "Modifier A",
-        updatedAt = "Updated A",
-        createdAt = "Created A"
-    ),
-    GetSupplierResponse.Data.Data(
-        id = "2",
-        status = true,
-        companyName = "Company B",
-        item = listOf(
-            GetSupplierResponse.Data.Data.Item(
-                itemName = "Item B",
-                sku = listOf(
-                    "Sku B"
-                )
-            )
-        ),
-        country = "Country B",
-        state = "State B",
-        city = "City B",
-        picName = "PIC B",
-        modifiedBy = "Modifier B",
-        updatedAt = "Updated B",
-        createdAt = "Created B"
-    )
-)
+private val supplierDto = DataDummy.INITIAL_SUPPLIER_DTO
 
 private const val FAKE_UNEXPECTED_ERROR_MESSAGE = "Fake Unexpected Exception"
 private const val FAKE_NETWORK_ERROR_MSG = "Fake Network Error"
@@ -152,7 +111,7 @@ class SupplierRepositoryImplTest {
         }
 
     @Test
-    fun `getSupplierList SHOULD return Error WHEN data source returns Error Response`() = runTest {
+    fun `getSupplierList SHOULD return Error WHEN data source throws Error Exception`() = runTest {
         // Arrange
         fakeDataSource.setShouldReturnError(true)
 

@@ -35,13 +35,13 @@ fun CreateSupplierScreen(
     val titleText: String
 
     if (uiState.isEditForm) {
-        successMessage = "Success, supplier has been edited"
-        errorMessage = "Error failed to edit supplier. Please check your connection and try again"
+        successMessage = "Success, supplier has been edited."
+        errorMessage = "Error, failed to edit supplier. Please check your connection and try again."
         submitText = "Edit"
         titleText = "Edit Supplier"
     } else {
-        successMessage = "Success, supplier has been added"
-        errorMessage = "Error failed to add supplier. Please check your connection and try again"
+        successMessage = "Success, supplier has been added."
+        errorMessage = "Error, failed to add supplier. Please check your connection and try again."
         submitText = "Create"
         titleText = "Create Supplier"
     }

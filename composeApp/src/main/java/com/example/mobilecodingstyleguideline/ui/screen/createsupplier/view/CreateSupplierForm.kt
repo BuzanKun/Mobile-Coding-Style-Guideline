@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.mobilecodingstyleguideline.model.createsupplier.CreateSupplierFormData
@@ -180,6 +181,7 @@ fun CreateSupplierForm(
         )
         // PIC Name Text Field
         TextField(
+            modifier = Modifier.testTag("picNameInput"),
             onValueChange = { result ->
                 onUpdateForm(
                     uiState.formData.copy(
@@ -207,7 +209,7 @@ fun CreateSupplierForm(
             placeholder = "Enter PIC contact number",
             dialCode = uiState.formData.picCountryCode,
             value = uiState.formData.picPhoneNumber,
-            title = "Company Phone Number",
+            title = "PIC Phone Number",
             isError = uiState.formError.picPhoneNumber != null,
             textError = uiState.formError.picPhoneNumber
         )
